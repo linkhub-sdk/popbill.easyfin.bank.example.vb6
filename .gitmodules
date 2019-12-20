@@ -1,0 +1,6 @@
+[submodule "Linkhub"]
+	path = Linkhub
+	url = https://github.com/linkhub-sdk/linkhub.auth.vb6
+[submodule "PopbillEasyFinBank"]
+	path = PopbillEasyFinBank
+	url = https://github.com/linkhub-sdk/popbill.easyfin.bank.vb6
