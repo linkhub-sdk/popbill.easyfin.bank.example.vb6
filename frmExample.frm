@@ -9,14 +9,6 @@ Begin VB.Form PopbillEasyFinBankExample
    ScaleHeight     =   10455
    ScaleWidth      =   17865
    StartUpPosition =   2  '화면 가운데
-   Begin VB.TextBox txtURL 
-      Height          =   375
-      Left            =   9360
-      TabIndex        =   44
-      Text            =   "Text1"
-      Top             =   120
-      Width           =   2295
-   End
    Begin VB.Frame Frame6 
       Caption         =   "계좌조회 관련 API"
       Height          =   6735
@@ -27,7 +19,7 @@ Begin VB.Form PopbillEasyFinBankExample
       Begin VB.ListBox searchInfo 
          Height          =   2940
          Left            =   360
-         TabIndex        =   45
+         TabIndex        =   44
          Top             =   3360
          Width           =   15135
       End
@@ -394,7 +386,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 '링크아이디
-Private Const LinkID = "TESTER"
+Private Const linkID = "TESTER"
 
 '비밀키. 유출에 주의하시기 바랍니다.
 Private Const SecretKey = "SwWxqU+0TErBXy/9TVjIPEnI0VTUMMSQZtJf3Ed8q3I="
@@ -425,7 +417,7 @@ End Sub
 Private Sub btnCheckIsMember_Click()
     Dim Response As PBResponse
     
-    Set Response = easyFinBankService.CheckIsMember(txtCorpNum.Text, LinkID)
+    Set Response = easyFinBankService.CheckIsMember(txtCorpNum.Text, linkID)
     
     If Response Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -483,7 +475,6 @@ Private Sub btnGetBankAccountMgtURL_Click()
         Exit Sub
     End If
     
-    txtURL.Text = url
     MsgBox "URL : " + vbCrLf + url
 End Sub
 
@@ -561,7 +552,6 @@ Private Sub btnGetFlatRatePopUpURL_Click()
         Exit Sub
     End If
     
-    txtURL.Text = url
     MsgBox "URL : " + vbCrLf + url
 End Sub
 
@@ -571,16 +561,16 @@ End Sub
 Private Sub btnGetFlatRateState_Click()
     Dim flatRateInfo As PBEasyFinBankFlatRate
     Dim tmp As String
-    Dim BankCode As String
-    Dim AccountNumber As String
+    Dim bankCode As String
+    Dim accountNumber As String
     
     '은행코드
-    BankCode = "0048"
+    bankCode = "0048"
     
     '팝빌에 등록된 계좌번호
-    AccountNumber = "131020538645"
+    accountNumber = "131020538645"
     
-    Set flatRateInfo = easyFinBankService.GetFlatRateState(txtCorpNum.Text, BankCode, AccountNumber)
+    Set flatRateInfo = easyFinBankService.GetFlatRateState(txtCorpNum.Text, bankCode, accountNumber)
      
     If flatRateInfo Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -670,7 +660,7 @@ Private Sub btnJoinMember_Click()
     Dim Response As PBResponse
     
     '링크 아이디
-    joinData.LinkID = LinkID
+    joinData.linkID = linkID
     
     '사업자번호, '-'제외, 10자리
     joinData.CorpNum = "1234567890"
@@ -780,13 +770,13 @@ Private Sub btnListBankAccount_Click()
             + "memo(메모)" + vbCrLf
     
     For Each info In bankAccountList
-        tmp = tmp + info.AccountNumber + " | "
-        tmp = tmp + info.BankCode + " | "
+        tmp = tmp + info.accountNumber + " | "
+        tmp = tmp + info.bankCode + " | "
         tmp = tmp + info.accountName + " | "
         tmp = tmp + info.accountType + " | "
         tmp = tmp + CStr(info.state) + " | "
         tmp = tmp + info.regDT + " | "
-        tmp = tmp + info.Memo
+        tmp = tmp + info.memo
         tmp = tmp + vbCrLf
     Next
     
@@ -871,16 +861,16 @@ End Sub
 
 Private Sub btnRequestJob_Click()
     Dim jobID As String
-    Dim BankCode As String
-    Dim AccountNumber As String
+    Dim bankCode As String
+    Dim accountNumber As String
     Dim SDate As String
     Dim EDate As String
     
     '은행코드
-    BankCode = "0048"
+    bankCode = "0004"
     
     '팝빌에 등록된 계좌번호
-    AccountNumber = "131020538645"
+    accountNumber = "131020538600"
     
     '시작일자, 표시형식(yyyyMMdd)
     SDate = "20190921"
@@ -888,7 +878,7 @@ Private Sub btnRequestJob_Click()
     '종료일자, 표시형식(yyyyMMdd)
     EDate = "20191220"
     
-    jobID = easyFinBankService.RequestJob(txtCorpNum.Text, BankCode, AccountNumber, SDate, EDate)
+    jobID = easyFinBankService.RequestJob(txtCorpNum.Text, bankCode, accountNumber, SDate, EDate)
     
     If jobID = "" Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -905,16 +895,16 @@ End Sub
 '=========================================================================
 Private Sub btnSaveMemo_Click()
     Dim Response As PBResponse
-    Dim TID As String
-    Dim Memo As String
+    Dim tid As String
+    Dim memo As String
     
     ' 거래내역 아이디, SeachAPI 응답항목 중 tid
-    TID = "01912181100000000120191210000003"
+    tid = "01912181100000000120191210000003"
     
     '메모
-    Memo = "20191220-테스트"
+    memo = "20191220-테스트"
     
-    Set Response = easyFinBankService.SaveMemo(txtCorpNum.Text, TID, Memo)
+    Set Response = easyFinBankService.SaveMemo(txtCorpNum.Text, tid, memo)
     
     If Response Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -978,7 +968,7 @@ Private Sub btnSearch_Click()
            
     For Each tiInfo In searchList.list
         listboxRow = ""
-        listboxRow = tiInfo.TID + " | "
+        listboxRow = tiInfo.tid + " | "
         listboxRow = listboxRow + tiInfo.trdate + " | "
         listboxRow = listboxRow + CStr(tiInfo.trserial) + " | "
         listboxRow = listboxRow + tiInfo.trdt + " | "
@@ -990,7 +980,7 @@ Private Sub btnSearch_Click()
         listboxRow = listboxRow + tiInfo.remark3 + " | "
         listboxRow = listboxRow + tiInfo.remark4 + " | "
         listboxRow = listboxRow + tiInfo.regDT + " | "
-        listboxRow = listboxRow + tiInfo.Memo
+        listboxRow = listboxRow + tiInfo.memo
         searchInfo.AddItem listboxRow, searchInfo.ListCount
     Next
   
@@ -1105,7 +1095,7 @@ End Sub
 Private Sub Form_Load()
 
     '간편 계좌조회 서비스 초기화
-    easyFinBankService.Initialize LinkID, SecretKey
+    easyFinBankService.Initialize linkID, SecretKey
     
     '연동환경 설정값 True(개발용), False(상업용)
     easyFinBankService.IsTest = True
