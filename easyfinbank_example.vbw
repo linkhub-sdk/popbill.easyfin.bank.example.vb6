@@ -1,4 +1,4 @@
-PopbillEasyFinBankExample = 164, 187, 1429, 840, , 247, 47, 1585, 872, C
+PopbillEasyFinBankExample = 233, 107, 1498, 760, , 247, 47, 1585, 872, C
 cStringBuilder = 0, 0, 0, 0, C
 Linkhub = 0, 0, 0, 0, C
 LinkhubToken = 0, 0, 0, 0, C
@@ -7,7 +7,7 @@ PBResponse = 300, 206, 1565, 859,
 PBJoinForm = 176, 232, 1441, 885, 
 PBChargeInfo = 198, 261, 1463, 914, 
 PBContactInfo = 220, 290, 1485, 943, 
-PBCorpInfo = 495, 39, 1760, 692, 
+PBCorpInfo = 527, 372, 1792, 1025, 
 PBEasyFinBankAccount = 549, 319, 1814, 972, 
 PBEasyFinBankJobState = 421, 171, 1686, 824, 
 PBEasyFinBankSearch = 154, 203, 1419, 856, 

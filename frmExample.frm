@@ -391,7 +391,7 @@ Private Const linkID = "TESTER"
 '비밀키. 유출에 주의하시기 바랍니다.
 Private Const SecretKey = "SwWxqU+0TErBXy/9TVjIPEnI0VTUMMSQZtJf3Ed8q3I="
 
-'홈택스 전자세금계산서 연동 클래스 선언
+'계좌조회 서비스 클래스 선언
 Private easyFinBankService As New PBEasyFinBankService
 
 '=========================================================================
