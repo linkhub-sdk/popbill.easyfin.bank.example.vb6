@@ -377,7 +377,7 @@ Attribute VB_Exposed = False
 '
 ' 팝빌 간편 계좌조회 API VB 6.0 SDK Example
 '
-' - 업데이트 일자 : 2019-12-20
+' - 업데이트 일자 : 2020-02-03
 ' - 연동 기술지원 연락처 : 1600-8536 / 070-4304-2991
 ' - 연동 기술지원 이메일 : code@linkhub.co.kr
 '
@@ -396,6 +396,7 @@ Private easyFinBankService As New PBEasyFinBankService
 
 '=========================================================================
 ' 팝빌 회원아이디 중복여부를 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#CheckID
 '=========================================================================
 Private Sub btnCheckID_Click()
     Dim Response As PBResponse
@@ -413,6 +414,7 @@ End Sub
 '=========================================================================
 ' 파트너의 연동회원으로 가입된 사업자번호인지 확인합니다.
 ' - LinkID는 인증정보로 설정되어 있는 링크아이디 값입니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#CheckIsMember
 '=========================================================================
 Private Sub btnCheckIsMember_Click()
     Dim Response As PBResponse
@@ -430,6 +432,7 @@ End Sub
 '=========================================================================
 ' 팝빌에 로그인된 팝빌 URL을 반환합니다.
 ' - 보안정책에 따라 반환된 URL은 30초의 유효시간을 갖습니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetAccessURL
 '=========================================================================
 Private Sub btnGetAccessURL_Click()
     Dim url As String
@@ -448,6 +451,7 @@ End Sub
 ' 연동회원의 잔여포인트를 확인합니다.
 ' - 과금방식이 파트너과금인 경우 파트너 잔여포인트(GetPartnerBalance API)
 '   를 통해 확인하시기 바랍니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetBalance
 '=========================================================================
 Private Sub btnGetBalance_Click()
     Dim balance As Double
@@ -464,6 +468,7 @@ End Sub
 
 '=========================================================================
 ' 은행 계좌관리 팝업 URL을 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetBankAccountMgtURL
 '=========================================================================
 Private Sub btnGetBankAccountMgtURL_Click()
     Dim url As String
@@ -480,6 +485,7 @@ End Sub
 
 '=========================================================================
 ' 연동회원의 간편 계좌조회 API 서비스 과금정보를 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetChargeInfo
 '=========================================================================
 Private Sub btnGetChargeInfo_Click()
     Dim ChargeInfo As PBChargeInfo
@@ -502,6 +508,7 @@ End Sub
 '=========================================================================
 ' 연동회원 포인트 충전 URL을 반환합니다.
 ' - URL 보안정책에 따라 반환된 URL은 30초의 유효시간을 갖습니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetChargeURL
 '=========================================================================
 Private Sub btnGetChargeURL_Click()
     Dim url As String
@@ -518,6 +525,7 @@ End Sub
 
 '=========================================================================
 ' 연동회원의 회사정보를 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetCorpInfo
 '=========================================================================
 Private Sub btnGetCorpInfo_Click()
     Dim CorpInfo As PBCorpInfo
@@ -541,6 +549,7 @@ End Sub
 
 '=========================================================================
 ' 간편 계좌조회 정액제 서비스 신청 팝업 URL을 반환한다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetFlatRatePopUpURL
 '=========================================================================
 Private Sub btnGetFlatRatePopUpURL_Click()
     Dim url As String
@@ -557,6 +566,7 @@ End Sub
 
 '=========================================================================
 ' 정액제 서비스 상태를 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetFlatRateState
 '=========================================================================
 Private Sub btnGetFlatRateState_Click()
     Dim flatRateInfo As PBEasyFinBankFlatRate
@@ -592,6 +602,7 @@ End Sub
 
 '=========================================================================
 ' 계좌 거래내역 수집 상태를 확인한다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetJobState
 '=========================================================================
 Private Sub btnGetJobState_Click()
     Dim jobInfo As PBEasyFinBankJobState
@@ -621,6 +632,7 @@ End Sub
 ' 파트너의 잔여포인트를 확인합니다.
 ' - 과금방식이 연동과금인 경우 연동회원 잔여포인트(GetBalance API)
 '   를 통해 확인하시기 바랍니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetPartnerBalance
 '=========================================================================
 Private Sub btnGetPartnerBalance_Click()
     Dim balance As Double
@@ -638,6 +650,7 @@ End Sub
 '=========================================================================
 ' 파트너 포인트 충전 URL을 반환합니다.
 ' - URL 보안정책에 따라 반환된 URL은 30초의 유효시간을 갖습니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetPartnerURL
 '=========================================================================
 Private Sub btnGetPartnerURL_CHRG_Click()
     Dim url As String
@@ -654,6 +667,7 @@ End Sub
 
 '=========================================================================
 ' 팝빌 연동회원 가입을 요청합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#JoinMember
 '=========================================================================
 Private Sub btnJoinMember_Click()
     Dim joinData As New PBJoinForm
@@ -713,6 +727,7 @@ End Sub
 
 '=========================================================================
 ' 1시간 이내 수집 요청 목록을 확인한다.
+' - https://docs.popbill.com/easyfinbank/vb/api#ListActiveJob
 '=========================================================================
 Private Sub btnListActiveJob_Click()
     Dim jobList As Collection
@@ -752,6 +767,7 @@ End Sub
 
 '=========================================================================
 ' 팝빌에 등록된 은행계좌 목록을 반환한다.
+' - https://docs.popbill.com/easyfinbank/vb/api#ListBankAccount
 '=========================================================================
 Private Sub btnListBankAccount_Click()
     Dim bankAccountList As Collection
@@ -786,6 +802,7 @@ End Sub
 
 '=========================================================================
 ' 연동회원의 담당자 목록을 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#ListContact
 '=========================================================================
 Private Sub btnListContact_Click()
     Dim resultList As Collection
@@ -812,6 +829,7 @@ End Sub
 
 '=========================================================================
 ' 연동회원의 담당자를 신규로 등록합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#RegistContact
 '=========================================================================
 Private Sub btnRegistContact_Click()
     Dim joinData As New PBContactInfo
@@ -857,6 +875,7 @@ End Sub
 '=========================================================================
 ' 계좌 거래내역 수집을 요청한다.
 ' - 검색기간은 현재일 기준 90일 이내로만 요청할 수 있다.
+' - https://docs.popbill.com/easyfinbank/vb/api#RequestJob
 '=========================================================================
 
 Private Sub btnRequestJob_Click()
@@ -892,6 +911,7 @@ End Sub
 
 '=========================================================================
 ' 계좌 거래내역에 메모를 저장한다.
+' - https://docs.popbill.com/easyfinbank/vb/api#SaveMemo
 '=========================================================================
 Private Sub btnSaveMemo_Click()
     Dim Response As PBResponse
@@ -917,6 +937,7 @@ End Sub
 
 '=========================================================================
 ' 계좌 거래내역을 조회한다.
+' - https://docs.popbill.com/easyfinbank/vb/api#Search
 '=========================================================================
 Private Sub btnSearch_Click()
     Dim searchList As PBEasyFinBankSearch
@@ -989,6 +1010,7 @@ End Sub
 
 '=========================================================================
 ' 계좌 거래내역 요약정보를 조회한다.
+' - https://docs.popbill.com/easyfinbank/vb/api#Summary
 '=========================================================================
 Private Sub btnSummary_Click()
     Dim summaryInfo As PBEasyFinBankSummary
@@ -1021,6 +1043,7 @@ End Sub
 
 '=========================================================================
 ' 연동회원의 담당자 정보를 수정합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#UpdateContact
 '=========================================================================
 Private Sub btnUpdateContact_Click()
     Dim joinData As New PBContactInfo
@@ -1062,6 +1085,7 @@ End Sub
 
 '=========================================================================
 ' 연동회원의 회사정보를 수정합니다
+' - https://docs.popbill.com/easyfinbank/vb/api#UpdateCorpInfo
 '=========================================================================
 Private Sub btnUpdateCorpInfo_Click()
     Dim CorpInfo As New PBCorpInfo
