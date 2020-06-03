@@ -1,9 +1,9 @@
-PopbillEasyFinBankExample = 96, 11, 1361, 664, , 10, 30, 1348, 855, C
+PopbillEasyFinBankExample = 96, 11, 1361, 664, Z, 10, 30, 1348, 855, C
 cStringBuilder = 0, 0, 0, 0, C
 Linkhub = 0, 0, 0, 0, C
 LinkhubToken = 0, 0, 0, 0, C
-PBEasyFinBankService = 60, 20, 1133, 741, 
-PBResponse = 300, 206, 1565, 859, 
+PBEasyFinBankService = 152, 41, 1225, 762, 
+PBResponse = 232, 190, 1497, 843, 
 PBJoinForm = 176, 232, 1441, 885, 
 PBChargeInfo = 198, 261, 1463, 914, 
 PBContactInfo = 220, 290, 1485, 943, 
