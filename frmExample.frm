@@ -33,7 +33,7 @@ Begin VB.Form PopbillEasyFinBankExample
       Begin VB.Frame Frame10 
          Caption         =   "정액제 관리"
          Height          =   2295
-         Left            =   7680
+         Left            =   12360
          TabIndex        =   30
          Top             =   360
          Width           =   2415
@@ -60,11 +60,51 @@ Begin VB.Form PopbillEasyFinBankExample
          Left            =   5160
          TabIndex        =   29
          Top             =   360
-         Width           =   2295
+         Width           =   6735
+         Begin VB.CommandButton btnRevokeCloseBankAccount 
+            Caption         =   "정액제 해지신청 취소"
+            Height          =   495
+            Left            =   4440
+            TabIndex        =   49
+            Top             =   960
+            Width           =   2175
+         End
+         Begin VB.CommandButton btnCloseBankAccount 
+            Caption         =   "계좌 정액제 해지신청"
+            Height          =   495
+            Left            =   4440
+            TabIndex        =   48
+            Top             =   360
+            Width           =   2175
+         End
+         Begin VB.CommandButton btnGetBankAccountInfo 
+            Caption         =   "계좌정보 확인"
+            Height          =   495
+            Left            =   2280
+            TabIndex        =   47
+            Top             =   360
+            Width           =   2055
+         End
+         Begin VB.CommandButton btnUpdateBankAccount 
+            Caption         =   "계좌정보 수정"
+            Height          =   495
+            Left            =   120
+            TabIndex        =   46
+            Top             =   960
+            Width           =   2055
+         End
+         Begin VB.CommandButton btnRegistBankAccount 
+            Caption         =   "계좌 등록"
+            Height          =   495
+            Left            =   120
+            TabIndex        =   45
+            Top             =   360
+            Width           =   2055
+         End
          Begin VB.CommandButton btnListBankAccount 
             Caption         =   "계좌 목록 확인"
             Height          =   495
-            Left            =   120
+            Left            =   2280
             TabIndex        =   38
             Top             =   960
             Width           =   2055
@@ -74,7 +114,7 @@ Begin VB.Form PopbillEasyFinBankExample
             Height          =   495
             Left            =   120
             TabIndex        =   37
-            Top             =   360
+            Top             =   1560
             Width           =   2055
          End
       End
@@ -377,7 +417,7 @@ Attribute VB_Exposed = False
 '
 ' 팝빌 간편 계좌조회 API VB 6.0 SDK Example
 '
-' - 업데이트 일자 : 2020-02-03
+' - 업데이트 일자 : 2020-06-03
 ' - 연동 기술지원 연락처 : 1600-8536 / 070-4304-2991
 ' - 연동 기술지원 이메일 : code@linkhub.co.kr
 '
@@ -430,6 +470,40 @@ Private Sub btnCheckIsMember_Click()
 End Sub
 
 '=========================================================================
+' 팝빌에 등록된 은행계좌의 정액제 해지를 요청한다.
+'=========================================================================
+Private Sub btnCloseBankAccount_Click()
+    
+    Dim Response As PBResponse
+    Dim BankCode As String
+    Dim AccountNumber As String
+    Dim CloseType As String
+    
+    ' [필수] 은행코드
+    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
+    ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
+    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
+    BankCode = ""
+    
+    ' [필수] 계좌번호 하이픈('-') 제외
+    AccountNumber = ""
+
+    ' 해지유형, "일반", "중도" 중 선택 기재
+    ' 일반해지 - 이용중인 정액제 사용기간까지 이용후 정지
+    ' 중도해지 - 요청일 기준으로 정지, 정액제 잔여기간은 일할로 계산되어 포인트 환불 (무료 이용기간 중 중도해지 시 전액 환불)
+    CloseType = "중도"
+    
+    Set Response = easyFinBankService.CloseBankAccount(txtCorpNum.Text, BankCode, AccountNumber, CloseType)
+    
+    If Response Is Nothing Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
+End Sub
+
+'=========================================================================
 ' 팝빌에 로그인된 팝빌 URL을 반환합니다.
 ' - 보안정책에 따라 반환된 URL은 30초의 유효시간을 갖습니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetAccessURL
@@ -464,6 +538,50 @@ Private Sub btnGetBalance_Click()
     End If
     
     MsgBox "연동회원 잔여포인트 : " + CStr(balance)
+End Sub
+
+'=========================================================================
+' 팝빌에 등록된 계좌정보를 확인합니다
+'=========================================================================
+Private Sub btnGetBankAccountInfo_Click()
+    Dim AccountInfo As PBEasyFinBankAccount
+    Dim tmp As String
+    Dim BankCode As String
+    Dim AccountNumber As String
+    
+    ' [필수] 은행코드
+    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
+    ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
+    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
+    BankCode = ""
+    
+    ' [필수] 계좌번호 하이픈('-') 제외
+    AccountNumber = ""
+    
+    Set AccountInfo = easyFinBankService.GetBankAccountInfo(txtCorpNum.Text, BankCode, AccountNumber)
+     
+    If AccountInfo Is Nothing Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    tmp = "bankCode (은행코드) : " + AccountInfo.BankCode + vbCrLf
+    tmp = tmp + "accountNumber (계좌번호) : " + AccountInfo.AccountNumber + vbCrLf
+    tmp = tmp + "accountName (계좌별칭) : " + AccountInfo.AccountName + vbCrLf
+    tmp = tmp + "accountType (계좌유형) : " + AccountInfo.AccountType + vbCrLf
+    tmp = tmp + "state (정액제 상태) : " + CStr(AccountInfo.state) + vbCrLf
+    tmp = tmp + "regDT (등록일시) : " + AccountInfo.regDT + vbCrLf
+    tmp = tmp + "contractDT (정액제 서비스 시작일시) : " + AccountInfo.contractDT + vbCrLf
+    tmp = tmp + "baseDate (자동연장 결제일) : " + CStr(AccountInfo.baseDate) + vbCrLf
+    tmp = tmp + "useEndDate (정액제 서비스 종료일자) : " + AccountInfo.useEndDate + vbCrLf
+    tmp = tmp + "contractState (정액제 서비스 상태) : " + CStr(AccountInfo.contractState) + vbCrLf
+    tmp = tmp + "closeRequestYN (정액제 해지신청 여부) : " + CStr(AccountInfo.closeRequestYN) + vbCrLf
+    tmp = tmp + "useRestrictYN (정액제 사용제한 여부) : " + CStr(AccountInfo.useRestrictYN) + vbCrLf
+    tmp = tmp + "closeOnExpired (정액제 만료시 해지여부) : " + CStr(AccountInfo.closeOnExpired) + vbCrLf
+    tmp = tmp + "unPaiedYN (미수금 보유 여부) : " + CStr(AccountInfo.unPaidYN) + vbCrLf
+    tmp = tmp + "memo (메모) : " + AccountInfo.Memo
+    
+    MsgBox tmp
 End Sub
 
 '=========================================================================
@@ -571,16 +689,16 @@ End Sub
 Private Sub btnGetFlatRateState_Click()
     Dim flatRateInfo As PBEasyFinBankFlatRate
     Dim tmp As String
-    Dim bankCode As String
-    Dim accountNumber As String
+    Dim BankCode As String
+    Dim AccountNumber As String
     
     '은행코드
-    bankCode = "0048"
+    BankCode = "0048"
     
     '팝빌에 등록된 계좌번호
-    accountNumber = "131020538645"
+    AccountNumber = "131020538645"
     
-    Set flatRateInfo = easyFinBankService.GetFlatRateState(txtCorpNum.Text, bankCode, accountNumber)
+    Set flatRateInfo = easyFinBankService.GetFlatRateState(txtCorpNum.Text, BankCode, AccountNumber)
      
     If flatRateInfo Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -783,16 +901,26 @@ Private Sub btnListBankAccount_Click()
     
     
     tmp = "accountNumber(계좌번호) | bankCode(은행코드) | accountName(계좌별칭) | accountType(계좌유형) | state(계좌 상태) | regDT(등록일시) |" _
-            + "memo(메모)" + vbCrLf
+        + " contractState (정액제 서비스 상태) | closeRequestYN (정액제 해지신청 여부) | useRestrictYN (정액제 사용제한 여부) | closeOnExpired (정액제 만료시 해지여부) | " _
+        + " unPaiedYN (미수금 보유 여부) | memo(메모)" + vbCrLf + vbCrLf
     
     For Each info In bankAccountList
-        tmp = tmp + info.accountNumber + " | "
-        tmp = tmp + info.bankCode + " | "
-        tmp = tmp + info.accountName + " | "
-        tmp = tmp + info.accountType + " | "
+        tmp = tmp + info.AccountNumber + " | "
+        tmp = tmp + info.BankCode + " | "
+        tmp = tmp + info.AccountName + " | "
+        tmp = tmp + info.AccountType + " | "
         tmp = tmp + CStr(info.state) + " | "
         tmp = tmp + info.regDT + " | "
-        tmp = tmp + info.memo
+        
+        tmp = tmp + info.contractDT + " | "
+        tmp = tmp + CStr(info.baseDate) + " | "
+        tmp = tmp + info.useEndDate + " | "
+        tmp = tmp + CStr(info.contractState) + " | "
+        tmp = tmp + CStr(info.closeRequestYN) + " | "
+        tmp = tmp + CStr(info.useRestrictYN) + " | "
+        tmp = tmp + CStr(info.closeOnExpired) + " | "
+        tmp = tmp + CStr(info.unPaidYN) + " | "
+        tmp = tmp + info.Memo
         tmp = tmp + vbCrLf
     Next
     
@@ -825,6 +953,63 @@ Private Sub btnListContact_Click()
     Next
     
     MsgBox tmp
+End Sub
+
+'=========================================================================
+' 계좌조회 서비스를 이용할 은행 계좌정보를 등록합니다.
+'=========================================================================
+Private Sub btnRegistBankAccount_Click()
+    Dim AccountInfo As New PBEasyFinBankAccountForm
+    Dim Response As PBResponse
+    
+    ' [필수] 은행코드
+    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
+    ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
+    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
+    AccountInfo.BankCode = ""
+    
+    ' [필수] 계좌번호 하이픈('-') 제외
+    AccountInfo.AccountNumber = ""
+
+    ' [필수] 계좌비밀번호
+    AccountInfo.AccountPWD = ""
+
+    ' [필수] 계좌유형, "법인" 또는 "개인" 입력
+    AccountInfo.AccountType = ""
+
+    ' [필수] 예금주 식별정보 (‘-‘ 제외)
+    ' 계좌유형이 “법인”인 경우 : 사업자번호(10자리)
+    ' 계좌유형이 “개인”인 경우 : 예금주 생년월일 (6자리-YYMMDD)
+    AccountInfo.IdentityNumber = ""
+
+    ' 계좌 별칭
+    AccountInfo.AccountName = ""
+
+    ' 인터넷뱅킹 아이디 (국민은행 필수)
+    AccountInfo.BankID = ""
+
+    ' 조회전용 계정 아이디 (대구은행, 신협, 신한은행 필수)
+    AccountInfo.FastID = ""
+
+    ' 조회전용 계정 비밀번호 (대구은행, 신협, 신한은행 필수
+    AccountInfo.FastPWD = ""
+
+    ' 결제기간(개월), 1~12 입력가능, 미기재시 기본값(1) 처리
+    ' - 파트너 과금방식의 경우 입력값에 관계없이 1개월 처리
+    AccountInfo.UsePeriod = "1"
+
+    ' 메모
+    AccountInfo.Memo = ""
+    
+   
+    Set Response = easyFinBankService.RegistBankAccount(txtCorpNum.Text, AccountInfo)
+    
+    If Response Is Nothing Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
 End Sub
 
 '=========================================================================
@@ -880,16 +1065,16 @@ End Sub
 
 Private Sub btnRequestJob_Click()
     Dim jobID As String
-    Dim bankCode As String
-    Dim accountNumber As String
+    Dim BankCode As String
+    Dim AccountNumber As String
     Dim SDate As String
     Dim EDate As String
     
     '은행코드
-    bankCode = "0004"
+    BankCode = "0004"
     
     '팝빌에 등록된 계좌번호
-    accountNumber = "131020538600"
+    AccountNumber = "131020538600"
     
     '시작일자, 표시형식(yyyyMMdd)
     SDate = "20190921"
@@ -897,7 +1082,7 @@ Private Sub btnRequestJob_Click()
     '종료일자, 표시형식(yyyyMMdd)
     EDate = "20191220"
     
-    jobID = easyFinBankService.RequestJob(txtCorpNum.Text, bankCode, accountNumber, SDate, EDate)
+    jobID = easyFinBankService.RequestJob(txtCorpNum.Text, BankCode, AccountNumber, SDate, EDate)
     
     If jobID = "" Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -910,21 +1095,49 @@ Private Sub btnRequestJob_Click()
 End Sub
 
 '=========================================================================
+'은행계좌의 정액제 해지요청을 취소한다.
+'=========================================================================
+Private Sub btnRevokeCloseBankAccount_Click()
+
+    Dim Response As PBResponse
+    Dim BankCode As String
+    Dim AccountNumber As String
+    
+    ' [필수] 은행코드
+    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
+    ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
+    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
+    BankCode = ""
+    
+    ' [필수] 계좌번호 하이픈('-') 제외
+    AccountNumber = ""
+    
+    Set Response = easyFinBankService.RevokeCloseBankAccount(txtCorpNum.Text, BankCode, AccountNumber)
+    
+    If Response Is Nothing Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
+End Sub
+
+'=========================================================================
 ' 계좌 거래내역에 메모를 저장한다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#SaveMemo
 '=========================================================================
 Private Sub btnSaveMemo_Click()
     Dim Response As PBResponse
     Dim tid As String
-    Dim memo As String
+    Dim Memo As String
     
     ' 거래내역 아이디, SeachAPI 응답항목 중 tid
     tid = "01912181100000000120191210000003"
     
     '메모
-    memo = "20191220-테스트"
+    Memo = "20191220-테스트"
     
-    Set Response = easyFinBankService.SaveMemo(txtCorpNum.Text, tid, memo)
+    Set Response = easyFinBankService.SaveMemo(txtCorpNum.Text, tid, Memo)
     
     If Response Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -1001,7 +1214,7 @@ Private Sub btnSearch_Click()
         listboxRow = listboxRow + tiInfo.remark3 + " | "
         listboxRow = listboxRow + tiInfo.remark4 + " | "
         listboxRow = listboxRow + tiInfo.regDT + " | "
-        listboxRow = listboxRow + tiInfo.memo
+        listboxRow = listboxRow + tiInfo.Memo
         searchInfo.AddItem listboxRow, searchInfo.ListCount
     Next
   
@@ -1039,6 +1252,51 @@ Private Sub btnSummary_Click()
     tmp = tmp + "totalAccOut (출금액 합계) : " + CStr(summaryInfo.totalAccOut) + vbCrLf
        
     MsgBox (tmp)
+End Sub
+
+'=========================================================================
+' 팝빌에 등록된 은행 계좌정보를 수정합니다.
+'=========================================================================
+Private Sub btnUpdateBankAccount_Click()
+    Dim AccountInfo As New PBEasyFinBankAccountForm
+    Dim Response As PBResponse
+    
+    ' [필수] 은행코드
+    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
+    ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
+    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
+    AccountInfo.BankCode = ""
+    
+    ' [필수] 계좌번호 하이픈('-') 제외
+    AccountInfo.AccountNumber = ""
+
+    ' [필수] 계좌비밀번호
+    AccountInfo.AccountPWD = ""
+
+    ' 계좌 별칭
+    AccountInfo.AccountName = ""
+
+    ' 인터넷뱅킹 아이디 (국민은행 필수)
+    AccountInfo.BankID = ""
+
+    ' 조회전용 계정 아이디 (대구은행, 신협, 신한은행 필수)
+    AccountInfo.FastID = ""
+
+    ' 조회전용 계정 비밀번호 (대구은행, 신협, 신한은행 필수
+    AccountInfo.FastPWD = ""
+    
+    ' 메모
+    AccountInfo.Memo = "!"
+    
+   
+    Set Response = easyFinBankService.UpdateBankAccount(txtCorpNum.Text, AccountInfo)
+    
+    If Response Is Nothing Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
 End Sub
 
 '=========================================================================
