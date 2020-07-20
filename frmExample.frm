@@ -415,9 +415,9 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '=========================================================================
 '
-' 팝빌 간편 계좌조회 API VB 6.0 SDK Example
+' 팝빌 계좌조회 API VB 6.0 SDK Example
 '
-' - 업데이트 일자 : 2020-06-03
+' - 업데이트 일자 : 2020-07-20
 ' - 연동 기술지원 연락처 : 1600-8536 / 070-4304-2991
 ' - 연동 기술지원 이메일 : code@linkhub.co.kr
 '
@@ -1074,13 +1074,13 @@ Private Sub btnRequestJob_Click()
     BankCode = "0004"
     
     '팝빌에 등록된 계좌번호
-    AccountNumber = "131020538600"
+    AccountNumber = "20700644024204"
     
     '시작일자, 표시형식(yyyyMMdd)
-    SDate = "20190921"
+    SDate = "20200601"
     
     '종료일자, 표시형식(yyyyMMdd)
-    EDate = "20191220"
+    EDate = "20200720"
     
     jobID = easyFinBankService.RequestJob(txtCorpNum.Text, BankCode, AccountNumber, SDate, EDate)
     
@@ -1191,7 +1191,8 @@ Private Sub btnSearch_Click()
     tmp = tmp + "total (총 검색결과 건수) : " + CStr(searchList.total) + vbCrLf
     tmp = tmp + "perPage (페이지당 검색개수) : " + CStr(searchList.perPage) + vbCrLf
     tmp = tmp + "pageNum (페이지 번호) : " + CStr(searchList.pageNum) + vbCrLf
-    tmp = tmp + "pageCount (페이지 개수) : " + CStr(searchList.pageCount) + vbCrLf + vbCrLf
+    tmp = tmp + "pageCount (페이지 개수) : " + CStr(searchList.pageCount) + vbCrLf
+    tmp = tmp + "lastScrapDT (최종 조회일시) : " + searchList.lastScrapDT + vbCrLf + vbCrLf
     
     searchInfo.Clear
         
@@ -1286,7 +1287,7 @@ Private Sub btnUpdateBankAccount_Click()
     AccountInfo.FastPWD = ""
     
     ' 메모
-    AccountInfo.Memo = "!"
+    AccountInfo.Memo = ""
     
    
     Set Response = easyFinBankService.UpdateBankAccount(txtCorpNum.Text, AccountInfo)
