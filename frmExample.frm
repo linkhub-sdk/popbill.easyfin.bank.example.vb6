@@ -435,7 +435,7 @@ Private Const SecretKey = "SwWxqU+0TErBXy/9TVjIPEnI0VTUMMSQZtJf3Ed8q3I="
 Private easyFinBankService As New PBEasyFinBankService
 
 '=========================================================================
-' 팝빌 회원아이디 중복여부를 확인합니다.
+' 사용하고자 하는 아이디의 중복여부를 확인합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#CheckID
 '=========================================================================
 Private Sub btnCheckID_Click()
@@ -452,7 +452,7 @@ Private Sub btnCheckID_Click()
 End Sub
 
 '=========================================================================
-' 파트너의 연동회원으로 가입된 사업자번호인지 확인합니다.
+' 사업자번호를 조회하여 연동회원 가입여부를 확인합니다.
 ' - LinkID는 인증정보로 설정되어 있는 링크아이디 값입니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#CheckIsMember
 '=========================================================================
@@ -470,7 +470,8 @@ Private Sub btnCheckIsMember_Click()
 End Sub
 
 '=========================================================================
-' 팝빌에 등록된 은행계좌의 정액제 해지를 요청한다.
+' 계좌의 정액제 해지를 요청합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#CloseBankAccount
 '=========================================================================
 Private Sub btnCloseBankAccount_Click()
     
@@ -504,8 +505,8 @@ Private Sub btnCloseBankAccount_Click()
 End Sub
 
 '=========================================================================
-' 팝빌에 로그인된 팝빌 URL을 반환합니다.
-' - 보안정책에 따라 반환된 URL은 30초의 유효시간을 갖습니다.
+' 팝빌 사이트에 로그인 상태로 접근할 수 있는 페이지의 팝업 URL을 반환합니다.
+' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetAccessURL
 '=========================================================================
 Private Sub btnGetAccessURL_Click()
@@ -523,8 +524,7 @@ End Sub
 
 '=========================================================================
 ' 연동회원의 잔여포인트를 확인합니다.
-' - 과금방식이 파트너과금인 경우 파트너 잔여포인트(GetPartnerBalance API)
-'   를 통해 확인하시기 바랍니다.
+' - 과금방식이 파트너과금인 경우 파트너 잔여포인트(GetPartnerBalance API)를 통해 확인하시기 바랍니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetBalance
 '=========================================================================
 Private Sub btnGetBalance_Click()
@@ -541,7 +541,8 @@ Private Sub btnGetBalance_Click()
 End Sub
 
 '=========================================================================
-' 팝빌에 등록된 계좌정보를 확인합니다
+' 팝빌에 등록된 계좌 정보를 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetBankAccountInfo
 '=========================================================================
 Private Sub btnGetBankAccountInfo_Click()
     Dim AccountInfo As PBEasyFinBankAccount
@@ -585,7 +586,8 @@ Private Sub btnGetBankAccountInfo_Click()
 End Sub
 
 '=========================================================================
-' 은행 계좌관리 팝업 URL을 확인합니다.
+' 계좌 등록, 수정 및 삭제할 수 있는 계좌 관리 팝업 URL을 반환합니다.
+' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetBankAccountMgtURL
 '=========================================================================
 Private Sub btnGetBankAccountMgtURL_Click()
@@ -602,7 +604,7 @@ Private Sub btnGetBankAccountMgtURL_Click()
 End Sub
 
 '=========================================================================
-' 연동회원의 간편 계좌조회 API 서비스 과금정보를 확인합니다.
+' 팝빌 계좌조회 API 서비스 과금정보를 확인합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetChargeInfo
 '=========================================================================
 Private Sub btnGetChargeInfo_Click()
@@ -624,8 +626,8 @@ Private Sub btnGetChargeInfo_Click()
 End Sub
 
 '=========================================================================
-' 연동회원 포인트 충전 URL을 반환합니다.
-' - URL 보안정책에 따라 반환된 URL은 30초의 유효시간을 갖습니다.
+' 연동회원 포인트 충전을 위한 페이지의 팝업 URL을 반환합니다.
+' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetChargeURL
 '=========================================================================
 Private Sub btnGetChargeURL_Click()
@@ -666,7 +668,8 @@ Private Sub btnGetCorpInfo_Click()
 End Sub
 
 '=========================================================================
-' 간편 계좌조회 정액제 서비스 신청 팝업 URL을 반환한다.
+' 계좌조회 정액제 서비스 신청 페이지의 팝업 URL을 반환합니다.
+' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetFlatRatePopUpURL
 '=========================================================================
 Private Sub btnGetFlatRatePopUpURL_Click()
@@ -683,7 +686,7 @@ Private Sub btnGetFlatRatePopUpURL_Click()
 End Sub
 
 '=========================================================================
-' 정액제 서비스 상태를 확인합니다.
+' 계좌조회 정액제 서비스 상태를 확인합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetFlatRateState
 '=========================================================================
 Private Sub btnGetFlatRateState_Click()
@@ -719,7 +722,7 @@ Private Sub btnGetFlatRateState_Click()
 End Sub
 
 '=========================================================================
-' 계좌 거래내역 수집 상태를 확인한다.
+' RequestJob(수집 요청)를 통해 반환 받은 작업아이디의 상태를 확인합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetJobState
 '=========================================================================
 Private Sub btnGetJobState_Click()
@@ -747,9 +750,8 @@ Private Sub btnGetJobState_Click()
 End Sub
 
 '=========================================================================
-' 파트너의 잔여포인트를 확인합니다.
-' - 과금방식이 연동과금인 경우 연동회원 잔여포인트(GetBalance API)
-'   를 통해 확인하시기 바랍니다.
+' 연동회원의 잔여포인트를 확인합니다.
+' - 과금방식이 파트너과금인 경우 파트너 잔여포인트(GetPartnerBalance API)를 통해 확인하시기 바랍니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetPartnerBalance
 '=========================================================================
 Private Sub btnGetPartnerBalance_Click()
@@ -766,8 +768,8 @@ Private Sub btnGetPartnerBalance_Click()
 End Sub
 
 '=========================================================================
-' 파트너 포인트 충전 URL을 반환합니다.
-' - URL 보안정책에 따라 반환된 URL은 30초의 유효시간을 갖습니다.
+' 파트너 포인트 충전을 위한 페이지의 팝업 URL을 반환합니다.
+' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetPartnerURL
 '=========================================================================
 Private Sub btnGetPartnerURL_CHRG_Click()
@@ -784,7 +786,7 @@ Private Sub btnGetPartnerURL_CHRG_Click()
 End Sub
 
 '=========================================================================
-' 팝빌 연동회원 가입을 요청합니다.
+' 사용자를 연동회원으로 가입처리합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#JoinMember
 '=========================================================================
 Private Sub btnJoinMember_Click()
@@ -844,7 +846,8 @@ Private Sub btnJoinMember_Click()
 End Sub
 
 '=========================================================================
-' 1시간 이내 수집 요청 목록을 확인한다.
+' RequestJob(수집 요청)를 통해 반환 받은 작업아이디의 목록을 확인합니다.
+' - 수집 요청 후 1시간이 경과한 수집 요청건은 상태정보가 반환되지 않습니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#ListActiveJob
 '=========================================================================
 Private Sub btnListActiveJob_Click()
@@ -929,7 +932,7 @@ Private Sub btnListBankAccount_Click()
 End Sub
 
 '=========================================================================
-' 연동회원의 담당자 목록을 확인합니다.
+' 연동회원 사업자번호에 등록된 담당자(팝빌 로그인 계정) 목록을 확인합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#ListContact
 '=========================================================================
 Private Sub btnListContact_Click()
@@ -956,7 +959,8 @@ Private Sub btnListContact_Click()
 End Sub
 
 '=========================================================================
-' 계좌조회 서비스를 이용할 은행 계좌정보를 등록합니다.
+' 계좌조회 서비스를 이용할 계좌를 팝빌에 등록합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#RegistBankAccount
 '=========================================================================
 Private Sub btnRegistBankAccount_Click()
     Dim AccountInfo As New PBEasyFinBankAccountForm
@@ -1013,7 +1017,7 @@ Private Sub btnRegistBankAccount_Click()
 End Sub
 
 '=========================================================================
-' 연동회원의 담당자를 신규로 등록합니다.
+' 연동회원 사업자번호에 담당자(팝빌 로그인 계정)를 추가합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#RegistContact
 '=========================================================================
 Private Sub btnRegistContact_Click()
@@ -1058,8 +1062,8 @@ Private Sub btnRegistContact_Click()
 End Sub
 
 '=========================================================================
-' 계좌 거래내역 수집을 요청한다.
-' - 검색기간은 현재일 기준 90일 이내로만 요청할 수 있다.
+' 계좌 거래내역을 확인하기 위해 팝빌에 수집요청을 합니다. 조회기간은 당일 기준으로 90일 이내로만 지정 가능합니다.
+' - 반환 받은 작업아이디는 함수 호출 시점부터 1시간 동안 유효합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#RequestJob
 '=========================================================================
 
@@ -1077,10 +1081,10 @@ Private Sub btnRequestJob_Click()
     AccountNumber = "20700644024204"
     
     '시작일자, 표시형식(yyyyMMdd)
-    SDate = "20200601"
+    SDate = "20210901"
     
     '종료일자, 표시형식(yyyyMMdd)
-    EDate = "20200720"
+    EDate = "20210910"
     
     jobID = easyFinBankService.RequestJob(txtCorpNum.Text, BankCode, AccountNumber, SDate, EDate)
     
@@ -1095,7 +1099,8 @@ Private Sub btnRequestJob_Click()
 End Sub
 
 '=========================================================================
-'은행계좌의 정액제 해지요청을 취소한다.
+' 신청한 정액제 해지요청을 취소합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#RevokeCloseBankAccount
 '=========================================================================
 Private Sub btnRevokeCloseBankAccount_Click()
 
@@ -1123,7 +1128,7 @@ Private Sub btnRevokeCloseBankAccount_Click()
 End Sub
 
 '=========================================================================
-' 계좌 거래내역에 메모를 저장한다.
+' 한 건의 거래 내역에 메모를 저장합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#SaveMemo
 '=========================================================================
 Private Sub btnSaveMemo_Click()
@@ -1132,10 +1137,10 @@ Private Sub btnSaveMemo_Click()
     Dim Memo As String
     
     ' 거래내역 아이디, SeachAPI 응답항목 중 tid
-    tid = "01912181100000000120191210000003"
+    tid = "02112181100000000120211210000003"
     
     '메모
-    Memo = "20191220-테스트"
+    Memo = "메모 테스트"
     
     Set Response = easyFinBankService.SaveMemo(txtCorpNum.Text, tid, Memo)
     
@@ -1149,7 +1154,7 @@ End Sub
 
 
 '=========================================================================
-' 계좌 거래내역을 조회한다.
+' GetJobState(수집 상태 확인)를 통해 상태 정보가 확인된 작업아이디를 활용하여 계좌 거래 내역을 조회합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#Search
 '=========================================================================
 Private Sub btnSearch_Click()
@@ -1223,7 +1228,7 @@ Private Sub btnSearch_Click()
 End Sub
 
 '=========================================================================
-' 계좌 거래내역 요약정보를 조회한다.
+' GetJobState(수집 상태 확인)를 통해 상태 정보가 확인된 작업아이디를 활용하여 계좌 거래내역의 요약 정보를 조회합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#Summary
 '=========================================================================
 Private Sub btnSummary_Click()
@@ -1256,7 +1261,8 @@ Private Sub btnSummary_Click()
 End Sub
 
 '=========================================================================
-' 팝빌에 등록된 은행 계좌정보를 수정합니다.
+' 팝빌에 등록된 계좌정보를 수정합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#UpdateBankAccount
 '=========================================================================
 Private Sub btnUpdateBankAccount_Click()
     Dim AccountInfo As New PBEasyFinBankAccountForm
@@ -1301,7 +1307,7 @@ Private Sub btnUpdateBankAccount_Click()
 End Sub
 
 '=========================================================================
-' 연동회원의 담당자 정보를 수정합니다.
+' 연동회원 사업자번호에 등록된 담당자(팝빌 로그인 계정) 정보를 수정합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#UpdateContact
 '=========================================================================
 Private Sub btnUpdateContact_Click()
@@ -1343,7 +1349,7 @@ Private Sub btnUpdateContact_Click()
 End Sub
 
 '=========================================================================
-' 연동회원의 회사정보를 수정합니다
+' 연동회원의 회사정보를 수정합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#UpdateCorpInfo
 '=========================================================================
 Private Sub btnUpdateCorpInfo_Click()
