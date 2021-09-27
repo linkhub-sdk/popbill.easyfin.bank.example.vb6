@@ -1391,5 +1391,6 @@ Private Sub Form_Load()
     
     '인증토큰 IP제한기능 사용여부, True(권장)
     easyFinBankService.IPRestrictOnOff = True
+    
 End Sub
 
