@@ -61,6 +61,14 @@ Begin VB.Form PopbillEasyFinBankExample
          TabIndex        =   29
          Top             =   360
          Width           =   6735
+         Begin VB.CommandButton btnDeleteBankAccount 
+            Caption         =   "종량제 계좌 삭제"
+            Height          =   495
+            Left            =   4440
+            TabIndex        =   50
+            Top             =   1560
+            Width           =   2175
+         End
          Begin VB.CommandButton btnRevokeCloseBankAccount 
             Caption         =   "정액제 해지신청 취소"
             Height          =   495
@@ -495,6 +503,30 @@ Private Sub btnCloseBankAccount_Click()
     CloseType = "중도"
     
     Set Response = easyFinBankService.CloseBankAccount(txtCorpNum.Text, BankCode, AccountNumber, CloseType)
+    
+    If Response Is Nothing Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
+End Sub
+
+Private Sub btnDeleteBankAccount_Click()
+    Dim Response As PBResponse
+    Dim BankCode As String
+    Dim AccountNumber As String
+    
+    ' [필수] 은행코드
+    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
+    ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
+    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
+    BankCode = ""
+    
+    ' [필수] 계좌번호 하이픈('-') 제외
+    AccountNumber = ""
+
+    Set Response = easyFinBankService.DeleteBankAccount(txtCorpNum.Text, BankCode, AccountNumber)
     
     If Response Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
