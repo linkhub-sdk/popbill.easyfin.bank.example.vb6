@@ -512,6 +512,11 @@ Private Sub btnCloseBankAccount_Click()
     MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
 End Sub
 
+'=========================================================================
+' 등록된 계좌를 삭제합니다.
+' - 정액제가 아닌 종량제 이용 시에만 등록된 계좌를 삭제할 수 있습니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#DeleteBankAccount
+'=========================================================================
 Private Sub btnDeleteBankAccount_Click()
     Dim Response As PBResponse
     Dim BankCode As String
