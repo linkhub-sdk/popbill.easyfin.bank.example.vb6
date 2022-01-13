@@ -1172,10 +1172,10 @@ Private Sub btnRegistContact_Click()
     Dim Response As PBResponse
     
     '담당자 아이디, 6자 이상 50자 미만
-    joinData.id = "testkorea"
+    joinData.id = "vb6easyfin004"
     
     '비밀번호, 8자 이상 20자 이하(영문, 숫자, 특수문자 조합)
-    joinData.Password = "asdf#$%123"
+    joinData.Password = "asdf!@#$1234"
     
     '담당자명, 최대 100자
     joinData.personName = "담당자명"
@@ -1193,7 +1193,7 @@ Private Sub btnRegistContact_Click()
     joinData.email = "test@test.com"
     
     '담당자 권한, 1-개인 / 2-읽기 / 3-회사
-    joinData.searchRole = 3
+    joinData.searchRole = 2
     
         
     Set Response = easyFinBankService.RegistContact(txtCorpNum.Text, joinData)
@@ -1461,7 +1461,7 @@ Private Sub btnUpdateContact_Click()
     Dim Response As PBResponse
     
     '담당자 아이디
-    joinData.id = txtUserID.Text
+    joinData.id = "vb6easyfin004"
     
     '담당자 성명, 최대 100자
     joinData.personName = "담당자명_수정"
@@ -1479,7 +1479,7 @@ Private Sub btnUpdateContact_Click()
     joinData.email = "test@test.com"
 
     '담당자 권한, 1-개인 / 2-읽기 / 3-회사
-    joinData.searchRole = 3
+    joinData.searchRole = 1
     
                 
     Set Response = easyFinBankService.UpdateContact(txtCorpNum.Text, joinData, txtUserID.Text)
