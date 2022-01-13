@@ -9,6 +9,13 @@ Begin VB.Form PopbillEasyFinBankExample
    ScaleHeight     =   11055
    ScaleWidth      =   17865
    StartUpPosition =   2  '화면 가운데
+   Begin VB.TextBox txtURL 
+      Height          =   315
+      Left            =   13560
+      TabIndex        =   55
+      Top             =   240
+      Width           =   3855
+   End
    Begin VB.Frame Frame6 
       Caption         =   "계좌조회 관련 API"
       Height          =   6735
@@ -349,6 +356,22 @@ Begin VB.Form PopbillEasyFinBankExample
          TabIndex        =   12
          Top             =   360
          Width           =   2295
+         Begin VB.CommandButton btnGetUseHistoryURL 
+            Caption         =   "포인트 사용내역 URL"
+            Height          =   410
+            Left            =   120
+            TabIndex        =   53
+            Top             =   1800
+            Width           =   2055
+         End
+         Begin VB.CommandButton btnGetPaymentURL 
+            Caption         =   "포인트 결제내역 URL"
+            Height          =   410
+            Left            =   120
+            TabIndex        =   52
+            Top             =   1320
+            Width           =   2055
+         End
          Begin VB.CommandButton btnGetBalance 
             Caption         =   "잔여포인트 확인"
             Height          =   410
@@ -407,6 +430,14 @@ Begin VB.Form PopbillEasyFinBankExample
       Top             =   255
       Width           =   1935
    End
+   Begin VB.Label Label5 
+      Caption         =   "URL : "
+      Height          =   180
+      Left            =   12840
+      TabIndex        =   54
+      Top             =   360
+      Width           =   660
+   End
    Begin VB.Label Label2 
       Caption         =   "팝빌회원 아이디 : "
       Height          =   180
@@ -442,7 +473,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 '링크아이디
-Private Const LinkID = "TESTER"
+Private Const linkID = "TESTER"
 
 '비밀키. 유출에 주의하시기 바랍니다.
 Private Const SecretKey = "SwWxqU+0TErBXy/9TVjIPEnI0VTUMMSQZtJf3Ed8q3I="
@@ -475,7 +506,7 @@ End Sub
 Private Sub btnCheckIsMember_Click()
     Dim Response As PBResponse
     
-    Set Response = easyFinBankService.CheckIsMember(txtCorpNum.Text, LinkID)
+    Set Response = easyFinBankService.CheckIsMember(txtCorpNum.Text, linkID)
     
     If Response Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -555,16 +586,17 @@ End Sub
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetAccessURL
 '=========================================================================
 Private Sub btnGetAccessURL_Click()
-    Dim url As String
+    Dim URL As String
            
-    url = easyFinBankService.GetAccessURL(txtCorpNum.Text, txtUserID.Text)
+    URL = easyFinBankService.GetAccessURL(txtCorpNum.Text, txtUserID.Text)
     
-    If url = "" Then
+    If URL = "" Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
         Exit Sub
     End If
     
-    MsgBox "URL : " + vbCrLf + url
+    MsgBox "URL : " + vbCrLf + URL
+    txtURL.Text = URL
 End Sub
 
 '=========================================================================
@@ -636,16 +668,17 @@ End Sub
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetBankAccountMgtURL
 '=========================================================================
 Private Sub btnGetBankAccountMgtURL_Click()
-    Dim url As String
+    Dim URL As String
            
-    url = easyFinBankService.GetBankAccountMgtURL(txtCorpNum.Text, txtUserID.Text)
+    URL = easyFinBankService.GetBankAccountMgtURL(txtCorpNum.Text, txtUserID.Text)
     
-    If url = "" Then
+    If URL = "" Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
         Exit Sub
     End If
     
-    MsgBox "URL : " + vbCrLf + url
+    MsgBox "URL : " + vbCrLf + URL
+    txtURL.Text = URL
 End Sub
 
 '=========================================================================
@@ -676,16 +709,17 @@ End Sub
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetChargeURL
 '=========================================================================
 Private Sub btnGetChargeURL_Click()
-    Dim url As String
+    Dim URL As String
            
-    url = easyFinBankService.GetChargeURL(txtCorpNum.Text, txtUserID.Text)
+    URL = easyFinBankService.GetChargeURL(txtCorpNum.Text, txtUserID.Text)
     
-    If url = "" Then
+    If URL = "" Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
         Exit Sub
     End If
     
-    MsgBox "URL : " + vbCrLf + url
+    MsgBox "URL : " + vbCrLf + URL
+    txtURL.Text = URL
 End Sub
 
 '=========================================================================
@@ -718,16 +752,17 @@ End Sub
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetFlatRatePopUpURL
 '=========================================================================
 Private Sub btnGetFlatRatePopUpURL_Click()
-    Dim url As String
+    Dim URL As String
            
-    url = easyFinBankService.GetFlatRatePopUpURL(txtCorpNum.Text, txtUserID.Text)
+    URL = easyFinBankService.GetFlatRatePopUpURL(txtCorpNum.Text, txtUserID.Text)
     
-    If url = "" Then
+    If URL = "" Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
         Exit Sub
     End If
     
-    MsgBox "URL : " + vbCrLf + url
+    MsgBox "URL : " + vbCrLf + URL
+    txtURL.Text = URL
 End Sub
 
 '=========================================================================
@@ -818,16 +853,55 @@ End Sub
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetPartnerURL
 '=========================================================================
 Private Sub btnGetPartnerURL_CHRG_Click()
-    Dim url As String
+    Dim URL As String
            
-    url = easyFinBankService.GetPartnerURL(txtCorpNum.Text, "CHRG")
+    URL = easyFinBankService.GetPartnerURL(txtCorpNum.Text, "CHRG")
     
-    If url = "" Then
+    If URL = "" Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
         Exit Sub
     End If
     
-    MsgBox "URL : " + vbCrLf + url
+    MsgBox "URL : " + vbCrLf + URL
+    txtURL.Text = URL
+End Sub
+
+'=========================================================================
+' 연동회원 포인트 결제내역 확인을 위한 페이지의 팝업 URL을 반환합니다.
+' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetPaymentURL
+'=========================================================================
+Private Sub btnGetPaymentURL_Click()
+    Dim URL As String
+           
+    URL = easyFinBankService.GetPaymentURL(txtCorpNum.Text, txtUserID.Text)
+    
+    If URL = "" Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox "URL : " + vbCrLf + URL
+    txtURL.Text = URL
+End Sub
+
+'=========================================================================
+' 연동회원 포인트 사용내역 확인을 위한 페이지의 팝업 URL을 반환합니다.
+' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetUseHistoryURL
+'=========================================================================
+Private Sub btnGetUseHistoryURL_Click()
+    Dim URL As String
+           
+    URL = easyFinBankService.GetUseHistoryURL(txtCorpNum.Text, txtUserID.Text)
+    
+    If URL = "" Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox "URL : " + vbCrLf + URL
+    txtURL.Text = URL
 End Sub
 
 '=========================================================================
@@ -839,7 +913,7 @@ Private Sub btnJoinMember_Click()
     Dim Response As PBResponse
     
     '링크 아이디
-    joinData.LinkID = LinkID
+    joinData.linkID = linkID
     
     '사업자번호, '-'제외, 10자리
     joinData.CorpNum = "1234567890"
@@ -1454,7 +1528,7 @@ End Sub
 Private Sub Form_Load()
 
     '간편 계좌조회 서비스 초기화
-    easyFinBankService.Initialize LinkID, SecretKey
+    easyFinBankService.Initialize linkID, SecretKey
     
     '연동환경 설정값 True(개발용), False(상업용)
     easyFinBankService.IsTest = True
