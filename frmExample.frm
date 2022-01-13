@@ -1,12 +1,12 @@
 VERSION 5.00
 Begin VB.Form PopbillEasyFinBankExample 
    Caption         =   "팝빌 간편 계좌조회 API Example"
-   ClientHeight    =   10455
+   ClientHeight    =   11055
    ClientLeft      =   60
    ClientTop       =   450
    ClientWidth     =   17865
    LinkTopic       =   "Form1"
-   ScaleHeight     =   10455
+   ScaleHeight     =   11055
    ScaleWidth      =   17865
    StartUpPosition =   2  '화면 가운데
    Begin VB.Frame Frame6 
@@ -14,7 +14,7 @@ Begin VB.Form PopbillEasyFinBankExample
       Height          =   6735
       Left            =   240
       TabIndex        =   26
-      Top             =   3360
+      Top             =   3840
       Width           =   17175
       Begin VB.ListBox searchInfo 
          Height          =   2940
@@ -217,7 +217,7 @@ Begin VB.Form PopbillEasyFinBankExample
    End
    Begin VB.Frame Frame15 
       Caption         =   "회사정보 관련"
-      Height          =   1935
+      Height          =   2415
       Left            =   14760
       TabIndex        =   6
       Top             =   1080
@@ -236,7 +236,7 @@ Begin VB.Form PopbillEasyFinBankExample
       Height          =   410
       Left            =   9960
       TabIndex        =   3
-      Top             =   1920
+      Top             =   2400
       Width           =   2055
    End
    Begin VB.CommandButton btnUpdateContact 
@@ -244,7 +244,7 @@ Begin VB.Form PopbillEasyFinBankExample
       Height          =   410
       Left            =   9960
       TabIndex        =   4
-      Top             =   2400
+      Top             =   2880
       Width           =   2055
    End
    Begin VB.CommandButton btnCheckID 
@@ -257,14 +257,14 @@ Begin VB.Form PopbillEasyFinBankExample
    End
    Begin VB.Frame Frame1 
       Caption         =   " 팝빌 기본 API "
-      Height          =   2535
+      Height          =   2895
       Left            =   240
       TabIndex        =   8
       Top             =   720
       Width           =   17175
       Begin VB.Frame Frame2 
          Caption         =   " 회원정보"
-         Height          =   1935
+         Height          =   2415
          Left            =   120
          TabIndex        =   21
          Top             =   360
@@ -288,7 +288,7 @@ Begin VB.Form PopbillEasyFinBankExample
       End
       Begin VB.Frame Frame3 
          Caption         =   " 포인트 관련"
-         Height          =   1935
+         Height          =   2415
          Left            =   2160
          TabIndex        =   19
          Top             =   360
@@ -304,11 +304,19 @@ Begin VB.Form PopbillEasyFinBankExample
       End
       Begin VB.Frame Frame4 
          Caption         =   "담당자 관련"
-         Height          =   1935
+         Height          =   2415
          Left            =   9600
          TabIndex        =   17
          Top             =   360
          Width           =   2295
+         Begin VB.CommandButton btnGetContactInfo 
+            Caption         =   "담당자 정보 확인"
+            Height          =   410
+            Left            =   120
+            TabIndex        =   51
+            Top             =   840
+            Width           =   2055
+         End
          Begin VB.CommandButton btnRegistContact 
             Caption         =   "담당자 추가"
             Height          =   410
@@ -320,7 +328,7 @@ Begin VB.Form PopbillEasyFinBankExample
       End
       Begin VB.Frame Frame5 
          Caption         =   " 팝빌 기본 URL"
-         Height          =   1935
+         Height          =   2415
          Left            =   12000
          TabIndex        =   15
          Top             =   360
@@ -336,7 +344,7 @@ Begin VB.Form PopbillEasyFinBankExample
       End
       Begin VB.Frame Frame11 
          Caption         =   "연동과금 포인트"
-         Height          =   1935
+         Height          =   2415
          Left            =   4560
          TabIndex        =   12
          Top             =   360
@@ -360,7 +368,7 @@ Begin VB.Form PopbillEasyFinBankExample
       End
       Begin VB.Frame Frame12 
          Caption         =   "파트너과금 포인트"
-         Height          =   1935
+         Height          =   2415
          Left            =   6960
          TabIndex        =   9
          Top             =   360
@@ -425,7 +433,7 @@ Attribute VB_Exposed = False
 '
 ' 팝빌 계좌조회 API VB 6.0 SDK Example
 '
-' - 업데이트 일자 : 2021-10-07
+' - 업데이트 일자 : 2022-01-13
 ' - 연동 기술지원 연락처 : 1600-8536 / 070-4304-2991
 ' - 연동 기술지원 이메일 : code@linkhub.co.kr
 '
@@ -434,7 +442,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 '링크아이디
-Private Const linkID = "TESTER"
+Private Const LinkID = "TESTER"
 
 '비밀키. 유출에 주의하시기 바랍니다.
 Private Const SecretKey = "SwWxqU+0TErBXy/9TVjIPEnI0VTUMMSQZtJf3Ed8q3I="
@@ -467,7 +475,7 @@ End Sub
 Private Sub btnCheckIsMember_Click()
     Dim Response As PBResponse
     
-    Set Response = easyFinBankService.CheckIsMember(txtCorpNum.Text, linkID)
+    Set Response = easyFinBankService.CheckIsMember(txtCorpNum.Text, LinkID)
     
     If Response Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -831,7 +839,7 @@ Private Sub btnJoinMember_Click()
     Dim Response As PBResponse
     
     '링크 아이디
-    joinData.linkID = linkID
+    joinData.LinkID = LinkID
     
     '사업자번호, '-'제외, 10자리
     joinData.CorpNum = "1234567890"
@@ -854,8 +862,8 @@ Private Sub btnJoinMember_Click()
     '아이디, 6자이상 20자 미만
     joinData.id = "userid"
     
-    '비밀번호, 6자이상 20자 미만
-    joinData.pwd = "pwd_must_be_long_enough"
+    '비밀번호, 8자 이상 20자 이하(영문, 숫자, 특수문자 조합)
+    joinData.Password = "asdf$%^123"
     
     '담당자명, 최대 30자
     joinData.ContactName = "담당자성명"
@@ -969,6 +977,34 @@ Private Sub btnListBankAccount_Click()
 End Sub
 
 '=========================================================================
+' 연동회원 사업자번호에 등록된 담당자(팝빌 로그인 계정) 정보를 확인합니다.
+' https://docs.popbill.com/easyfinbank/vb/api#GetContactInfo
+'=========================================================================
+Private Sub btnGetContactInfo_Click()
+    Dim tmp As String
+    Dim info As PBContactInfo
+    Dim ContactID As String
+    
+    ContactID = "testkorea"
+    
+    Set info = easyFinBankService.GetContactInfo(txtCorpNum.Text, ContactID, txtUserID.Text)
+    
+    If info Is Nothing Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    tmp = "id(아이디) | personName(성명) | email(이메일) | hp(휴대폰번호) |  fax(팩스번호) | tel(연락처) | " _
+         + "regDT(등록일시) | searchRole(담당자 권한) | mgrYN(관리자 여부) | state(상태) " + vbCrLf
+    
+   
+    tmp = tmp + info.id + " | " + info.personName + " | " + info.email + " | " + info.hp + " | " + info.fax _
+        + info.tel + " | " + info.regDT + " | " + CStr(info.searchRole) + " | " + CStr(info.mgrYN) + " | " + CStr(info.state) + vbCrLf
+        
+    MsgBox tmp
+End Sub
+
+'=========================================================================
 ' 연동회원 사업자번호에 등록된 담당자(팝빌 로그인 계정) 목록을 확인합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#ListContact
 '=========================================================================
@@ -985,11 +1021,11 @@ Private Sub btnListContact_Click()
     End If
     
     tmp = "id(아이디) | personName(성명) | email(이메일) | hp(휴대폰번호) |  fax(팩스번호) | tel(연락처) | " _
-         + "regDT(등록일시) | searchAllAllowYN(회사조회 권한여부) | mgrYN(관리자 여부) | state(상태) " + vbCrLf
+         + "regDT(등록일시) | searchRole(담당자 권한) | mgrYN(관리자 여부) | state(상태) " + vbCrLf
     
     For Each info In resultList
         tmp = tmp + info.id + " | " + info.personName + " | " + info.email + " | " + info.hp + " | " + info.fax _
-        + info.tel + " | " + info.regDT + " | " + CStr(info.searchAllAllowYN) + " | " + CStr(info.mgrYN) + " | " + CStr(info.state) + vbCrLf
+        + info.tel + " | " + info.regDT + " | " + CStr(info.searchRole) + " | " + CStr(info.mgrYN) + " | " + CStr(info.state) + vbCrLf
     Next
     
     MsgBox tmp
@@ -1064,8 +1100,8 @@ Private Sub btnRegistContact_Click()
     '담당자 아이디, 6자 이상 50자 미만
     joinData.id = "testkorea"
     
-    '비밀번호, 6자 이상 20자 미만
-    joinData.pwd = "test@test.com"
+    '비밀번호, 8자 이상 20자 이하(영문, 숫자, 특수문자 조합)
+    joinData.Password = "asdf#$%123"
     
     '담당자명, 최대 100자
     joinData.personName = "담당자명"
@@ -1082,8 +1118,8 @@ Private Sub btnRegistContact_Click()
     '담당자 메일주소, 최대 100자
     joinData.email = "test@test.com"
     
-    '회사조회 권한여부, True-회사조회 / False-개인조회
-    joinData.searchAllAllowYN = True
+    '담당자 권한, 1-개인 / 2-읽기 / 3-회사
+    joinData.searchRole = 3
     
         
     Set Response = easyFinBankService.RegistContact(txtCorpNum.Text, joinData)
@@ -1368,8 +1404,8 @@ Private Sub btnUpdateContact_Click()
     '담당자 이메일, 최대 100자
     joinData.email = "test@test.com"
 
-    '회사조회 권한여부, True-회사조회 / False-개인조회
-    joinData.searchAllAllowYN = True
+    '담당자 권한, 1-개인 / 2-읽기 / 3-회사
+    joinData.searchRole = 3
     
                 
     Set Response = easyFinBankService.UpdateContact(txtCorpNum.Text, joinData, txtUserID.Text)
@@ -1418,7 +1454,7 @@ End Sub
 Private Sub Form_Load()
 
     '간편 계좌조회 서비스 초기화
-    easyFinBankService.Initialize linkID, SecretKey
+    easyFinBankService.Initialize LinkID, SecretKey
     
     '연동환경 설정값 True(개발용), False(상업용)
     easyFinBankService.IsTest = True
