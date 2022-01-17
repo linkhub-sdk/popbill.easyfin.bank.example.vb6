@@ -465,8 +465,9 @@ Attribute VB_Exposed = False
 ' 팝빌 계좌조회 API VB 6.0 SDK Example
 '
 ' - 업데이트 일자 : 2022-01-17
-' - 연동 기술지원 연락처 : 1600-8536 / 070-4304-2991
-' - 연동 기술지원 이메일 : code@linkhub.co.kr
+' - 연동 기술지원 연락처 : 1600-8536
+' - 연동 기술지원 이메일 : code@linkhubcorp.com
+' - VB6 SDK 적용방법 안내 : https://docs.popbill.com/easyfinbank/tutorial/vb
 '
 '=========================================================================
 
@@ -803,6 +804,12 @@ End Sub
 
 '=========================================================================
 ' RequestJob(수집 요청)를 통해 반환 받은 작업아이디의 상태를 확인합니다.
+' - 거래 내역 조회(Search API) 함수 또는 거래 요약 정보 조회(Summary API) 함수전
+'   수집 작업의 진행 상태, 수집 작업의 성공 여부를 확인해야 합니다.
+' - 작업 상태(jobState) = 3(완료)이고 수집 결과 코드(errorCode) = 1(수집성공)이면
+'   거래 내역 조회(Search) 또는 거래 요약 정보 조회(Summary) 를 해야합니다.
+' - 작업 상태(jobState)가 3(완료)이지만 수집 결과 코드(errorCode)가 1(수집성공)이 아닌 경우에는
+'   오류메시지(errorReason)로 수집 실패에 대한 원인을 파악할 수 있습니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#GetJobState
 '=========================================================================
 Private Sub btnGetJobState_Click()
@@ -1227,10 +1234,10 @@ Private Sub btnRequestJob_Click()
     AccountNumber = "20700644024204"
     
     '시작일자, 표시형식(yyyyMMdd)
-    SDate = "20210901"
+    SDate = "20220101"
     
     '종료일자, 표시형식(yyyyMMdd)
-    EDate = "20210910"
+    EDate = "20220130"
     
     jobID = easyFinBankService.RequestJob(txtCorpNum.Text, BankCode, AccountNumber, SDate, EDate)
     
@@ -1530,16 +1537,13 @@ Private Sub Form_Load()
     '간편 계좌조회 서비스 초기화
     easyFinBankService.Initialize linkID, SecretKey
     
-    '연동환경 설정값 True(개발용), False(상업용)
+    '연동환경설정값, True-개발용 False-상업용
     easyFinBankService.IsTest = True
     
-    '인증토큰 IP제한기능 사용여부, True(권장)
+    '인증토큰 IP제한기능 사용여부, True-사용, False-미사용, 기본값(True)
     easyFinBankService.IPRestrictOnOff = True
     
-    ' 팝빌 API 서비스 고정 IP 사용여부, True-사용, False-미사용, 기본값(False)
-    easyFinBankService.UseStaticIP = False
-    
-    ' 로컬시스템 시간 사용여부 True-사용, Fasle-미사용, 기본값(False)
+    '로컬시스템 시간 사용여부 True-사용, Fasle-미사용, 기본값(False)
     easyFinBankService.UseLocalTimeYN = False
     
 End Sub
