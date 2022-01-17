@@ -464,7 +464,7 @@ Attribute VB_Exposed = False
 '
 ' 팝빌 계좌조회 API VB 6.0 SDK Example
 '
-' - 업데이트 일자 : 2022-01-13
+' - 업데이트 일자 : 2022-01-17
 ' - 연동 기술지원 연락처 : 1600-8536 / 070-4304-2991
 ' - 연동 기술지원 이메일 : code@linkhub.co.kr
 '
@@ -527,7 +527,7 @@ Private Sub btnCloseBankAccount_Click()
     Dim AccountNumber As String
     Dim CloseType As String
     
-    ' [필수] 은행코드
+    ' [필수] 기관코드
     ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
     ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
     ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
@@ -561,7 +561,7 @@ Private Sub btnDeleteBankAccount_Click()
     Dim BankCode As String
     Dim AccountNumber As String
     
-    ' [필수] 은행코드
+    ' [필수] 기관코드
     ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
     ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
     ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
@@ -627,7 +627,7 @@ Private Sub btnGetBankAccountInfo_Click()
     Dim BankCode As String
     Dim AccountNumber As String
     
-    ' [필수] 은행코드
+    ' [필수] 기관코드
     ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
     ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
     ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
@@ -643,7 +643,7 @@ Private Sub btnGetBankAccountInfo_Click()
         Exit Sub
     End If
     
-    tmp = "bankCode (은행코드) : " + AccountInfo.BankCode + vbCrLf
+    tmp = "bankCode (기관코드) : " + AccountInfo.BankCode + vbCrLf
     tmp = tmp + "accountNumber (계좌번호) : " + AccountInfo.AccountNumber + vbCrLf
     tmp = tmp + "accountName (계좌별칭) : " + AccountInfo.AccountName + vbCrLf
     tmp = tmp + "accountType (계좌유형) : " + AccountInfo.AccountType + vbCrLf
@@ -775,7 +775,7 @@ Private Sub btnGetFlatRateState_Click()
     Dim BankCode As String
     Dim AccountNumber As String
     
-    '은행코드
+    '기관코드
     BankCode = "0048"
     
     '팝빌에 등록된 계좌번호
@@ -1022,7 +1022,7 @@ Private Sub btnListBankAccount_Click()
     End If
     
     
-    tmp = "accountNumber(계좌번호) | bankCode(은행코드) | accountName(계좌별칭) | accountType(계좌유형) | state(계좌 상태) | regDT(등록일시) |" _
+    tmp = "accountNumber(계좌번호) | bankCode(기관코드) | accountName(계좌별칭) | accountType(계좌유형) | state(계좌 상태) | regDT(등록일시) |" _
         + " contractState (정액제 서비스 상태) | closeRequestYN (정액제 해지신청 여부) | useRestrictYN (정액제 사용제한 여부) | closeOnExpired (정액제 만료시 해지여부) | " _
         + " unPaiedYN (미수금 보유 여부) | memo(메모)" + vbCrLf + vbCrLf
     
@@ -1113,7 +1113,7 @@ Private Sub btnRegistBankAccount_Click()
     Dim AccountInfo As New PBEasyFinBankAccountForm
     Dim Response As PBResponse
     
-    ' [필수] 은행코드
+    ' [필수] 기관코드
     ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
     ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
     ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
@@ -1220,7 +1220,7 @@ Private Sub btnRequestJob_Click()
     Dim SDate As String
     Dim EDate As String
     
-    '은행코드
+    '기관코드
     BankCode = "0004"
     
     '팝빌에 등록된 계좌번호
@@ -1254,7 +1254,7 @@ Private Sub btnRevokeCloseBankAccount_Click()
     Dim BankCode As String
     Dim AccountNumber As String
     
-    ' [필수] 은행코드
+    ' [필수] 기관코드
     ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
     ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
     ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
@@ -1414,7 +1414,7 @@ Private Sub btnUpdateBankAccount_Click()
     Dim AccountInfo As New PBEasyFinBankAccountForm
     Dim Response As PBResponse
     
-    ' [필수] 은행코드
+    ' [필수] 기관코드
     ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
     ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
     ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
