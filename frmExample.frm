@@ -465,7 +465,7 @@ Attribute VB_Exposed = False
 ' 팝빌 계좌조회 API VB 6.0 SDK Example
 '
 ' - 업데이트 일자 : 2022-01-17
-' - 연동 기술지원 연락처 : 1600-8536
+' - 연동 기술지원 연락처 : 1600-9854
 ' - 연동 기술지원 이메일 : code@linkhubcorp.com
 ' - VB6 SDK 적용방법 안내 : https://docs.popbill.com/easyfinbank/tutorial/vb
 '
@@ -777,10 +777,10 @@ Private Sub btnGetFlatRateState_Click()
     Dim AccountNumber As String
     
     '기관코드
-    BankCode = "0048"
+    BankCode = ""
     
     '팝빌에 등록된 계좌번호
-    AccountNumber = "131020538645"
+    AccountNumber = ""
     
     Set flatRateInfo = easyFinBankService.GetFlatRateState(txtCorpNum.Text, BankCode, AccountNumber)
      
@@ -1228,16 +1228,16 @@ Private Sub btnRequestJob_Click()
     Dim EDate As String
     
     '기관코드
-    BankCode = "0004"
+    BankCode = ""
     
     '팝빌에 등록된 계좌번호
-    AccountNumber = "20700644024204"
+    AccountNumber = ""
     
     '시작일자, 표시형식(yyyyMMdd)
-    SDate = "20220101"
+    SDate = ""
     
     '종료일자, 표시형식(yyyyMMdd)
-    EDate = "20220130"
+    EDate = ""
     
     jobID = easyFinBankService.RequestJob(txtCorpNum.Text, BankCode, AccountNumber, SDate, EDate)
     
