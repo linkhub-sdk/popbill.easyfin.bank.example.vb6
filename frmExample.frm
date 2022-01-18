@@ -1320,7 +1320,7 @@ Private Sub btnSearch_Click()
     Dim listboxRow As String
     Dim SearchString As String
         
-    '거래유형 배열, I-입금, O-지출
+    '거래유형 배열, I-입금, O-출금
     TradeType.Add "I"
     TradeType.Add "O"
     
@@ -1390,7 +1390,7 @@ Private Sub btnSummary_Click()
     Dim SearchString As String
     Dim tmp As String
     
-    '거래유형 배열, I-입금, O-지출
+    '거래유형 배열, I-입금, O-출금
     TradeType.Add "I"
     TradeType.Add "O"
     
