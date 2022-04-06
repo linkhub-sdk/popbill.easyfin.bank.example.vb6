@@ -124,7 +124,7 @@ Begin VB.Form PopbillEasyFinBankExample
             Top             =   960
             Width           =   2055
          End
-         Begin VB.CommandButton btnGetBankAccountMgtURL 
+         Begin VB.CommandButton btnBankAccountMgtURL 
             Caption         =   "계좌관리 팝업 URL"
             Height          =   495
             Left            =   120
@@ -460,36 +460,54 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-'=========================================================================
+'================================== =======================================
 '
-' 팝빌 계좌조회 API VB 6.0 SDK Example
+' 팝빌 계좌조회 API VB SDK Example
 '
-' - 업데이트 일자 : 2022-01-17
+' - 업데이트 일자 : 2022-04-06
 ' - 연동 기술지원 연락처 : 1600-9854
 ' - 연동 기술지원 이메일 : code@linkhubcorp.com
-' - VB6 SDK 적용방법 안내 : https://docs.popbill.com/easyfinbank/tutorial/vb
+' - VB SDK 적용방법 안내 : https://docs.popbill.com/easyfinbank/tutorial/vb
 '
 '=========================================================================
 
 Option Explicit
 
 '링크아이디
-Private Const linkID = "TESTER"
+Private Const LinkID = "TESTER"
 
-'비밀키. 유출에 주의하시기 바랍니다.
+'비밀키
 Private Const SecretKey = "SwWxqU+0TErBXy/9TVjIPEnI0VTUMMSQZtJf3Ed8q3I="
 
 '계좌조회 서비스 클래스 선언
 Private easyFinBankService As New PBEasyFinBankService
 
 '=========================================================================
-' 사용하고자 하는 아이디의 중복여부를 확인합니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#CheckID
+' 팝빌에 등록된 계좌 정보를 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetBankAccountMgtURL
 '=========================================================================
-Private Sub btnCheckID_Click()
+Private Sub btnBankAccountMgtURL_Click()
+    Dim URL As String
+           
+    URL = easyFinBankService.GetBankAccountMgtURL(txtCorpNum.Text, txtUserID.Text)
+    
+    If URL = "" Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox "URL : " + vbCrLf + URL
+    txtURL.Text = URL
+End Sub
+
+'=========================================================================
+' 사업자번호를 조회하여 연동회원 가입여부를 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#CheckIsMember
+'=========================================================================
+Private Sub btnCheckIsMember_Click()
     Dim Response As PBResponse
     
-    Set Response = easyFinBankService.CheckID(txtUserID.Text)
+    Set Response = easyFinBankService.CheckIsMember(txtCorpNum.Text, LinkID)
     
     If Response Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -500,14 +518,13 @@ Private Sub btnCheckID_Click()
 End Sub
 
 '=========================================================================
-' 사업자번호를 조회하여 연동회원 가입여부를 확인합니다.
-' - LinkID는 인증정보로 설정되어 있는 링크아이디 값입니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#CheckIsMember
+' 사용하고자 하는 아이디의 중복여부를 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#CheckID
 '=========================================================================
-Private Sub btnCheckIsMember_Click()
+Private Sub btnCheckID_Click()
     Dim Response As PBResponse
     
-    Set Response = easyFinBankService.CheckIsMember(txtCorpNum.Text, linkID)
+    Set Response = easyFinBankService.CheckID(txtUserID.Text)
     
     If Response Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -529,12 +546,12 @@ Private Sub btnCloseBankAccount_Click()
     Dim CloseType As String
     
     ' [필수] 기관코드
-    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
+    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 / 수협은행-0007 / 농협은행-0011 / 우리은행-0020
     ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
-    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
+    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 / 씨티은행-0027
     BankCode = ""
     
-    ' [필수] 계좌번호 하이픈('-') 제외
+    ' [필수] 계좌번호, 하이픈('-') 제외
     AccountNumber = ""
 
     ' 해지유형, "일반", "중도" 중 선택 기재
@@ -545,16 +562,17 @@ Private Sub btnCloseBankAccount_Click()
     Set Response = easyFinBankService.CloseBankAccount(txtCorpNum.Text, BankCode, AccountNumber, CloseType)
     
     If Response Is Nothing Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        MsgBox ("응답코드(code) : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지(message) : " + easyFinBankService.LastErrMessage)
         Exit Sub
     End If
     
-    MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
+    MsgBox ("응답코드(code)  : " + CStr(Response.code) + vbCrLf + "응답메시지(message) : " + Response.Message)
 End Sub
 
 '=========================================================================
 ' 등록된 계좌를 삭제합니다.
 ' - 정액제가 아닌 종량제 이용 시에만 등록된 계좌를 삭제할 수 있습니다.
+' - 정액제 이용 시 정액제 해지요청(CloseBankAccount API) 함수를 사용하여 정액제를 해제할 수 있습니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#DeleteBankAccount
 '=========================================================================
 Private Sub btnDeleteBankAccount_Click()
@@ -571,7 +589,7 @@ Private Sub btnDeleteBankAccount_Click()
     ' [필수] 계좌번호 하이픈('-') 제외
     AccountNumber = ""
 
-    Set Response = easyFinBankService.DeleteBankAccount(txtCorpNum.Text, BankCode, AccountNumber)
+    Set Response = easyFinBankService.DeleteBankAccount(txtCorpNum.Text, BankCode, AccountNumber, txtUserID.Text)
     
     If Response Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -579,43 +597,6 @@ Private Sub btnDeleteBankAccount_Click()
     End If
     
     MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
-End Sub
-
-'=========================================================================
-' 팝빌 사이트에 로그인 상태로 접근할 수 있는 페이지의 팝업 URL을 반환합니다.
-' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#GetAccessURL
-'=========================================================================
-Private Sub btnGetAccessURL_Click()
-    Dim URL As String
-           
-    URL = easyFinBankService.GetAccessURL(txtCorpNum.Text, txtUserID.Text)
-    
-    If URL = "" Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
-        Exit Sub
-    End If
-    
-    MsgBox "URL : " + vbCrLf + URL
-    txtURL.Text = URL
-End Sub
-
-'=========================================================================
-' 연동회원의 잔여포인트를 확인합니다.
-' - 과금방식이 파트너과금인 경우 파트너 잔여포인트(GetPartnerBalance API)를 통해 확인하시기 바랍니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#GetBalance
-'=========================================================================
-Private Sub btnGetBalance_Click()
-    Dim balance As Double
-    
-    balance = easyFinBankService.GetBalance(txtCorpNum.Text)
-    
-    If balance < 0 Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
-        Exit Sub
-    End If
-    
-    MsgBox "연동회원 잔여포인트 : " + CStr(balance)
 End Sub
 
 '=========================================================================
@@ -629,18 +610,18 @@ Private Sub btnGetBankAccountInfo_Click()
     Dim AccountNumber As String
     
     ' [필수] 기관코드
-    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
+    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 / 수협은행-0007 / 농협은행-0011 / 우리은행-0020
     ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
-    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
+    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 / 씨티은행-0027
     BankCode = ""
     
-    ' [필수] 계좌번호 하이픈('-') 제외
+    ' [필수] 계좌번호, 하이픈('-') 제외
     AccountNumber = ""
     
     Set AccountInfo = easyFinBankService.GetBankAccountInfo(txtCorpNum.Text, BankCode, AccountNumber)
      
     If AccountInfo Is Nothing Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        MsgBox ("응답코드(code) : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지(message) : " + easyFinBankService.LastErrMessage)
         Exit Sub
     End If
     
@@ -650,6 +631,7 @@ Private Sub btnGetBankAccountInfo_Click()
     tmp = tmp + "accountType (계좌유형) : " + AccountInfo.AccountType + vbCrLf
     tmp = tmp + "state (정액제 상태) : " + CStr(AccountInfo.state) + vbCrLf
     tmp = tmp + "regDT (등록일시) : " + AccountInfo.regDT + vbCrLf
+    
     tmp = tmp + "contractDT (정액제 서비스 시작일시) : " + AccountInfo.contractDT + vbCrLf
     tmp = tmp + "baseDate (자동연장 결제일) : " + CStr(AccountInfo.baseDate) + vbCrLf
     tmp = tmp + "useEndDate (정액제 서비스 종료일자) : " + AccountInfo.useEndDate + vbCrLf
@@ -657,92 +639,8 @@ Private Sub btnGetBankAccountInfo_Click()
     tmp = tmp + "closeRequestYN (정액제 해지신청 여부) : " + CStr(AccountInfo.closeRequestYN) + vbCrLf
     tmp = tmp + "useRestrictYN (정액제 사용제한 여부) : " + CStr(AccountInfo.useRestrictYN) + vbCrLf
     tmp = tmp + "closeOnExpired (정액제 만료시 해지여부) : " + CStr(AccountInfo.closeOnExpired) + vbCrLf
-    tmp = tmp + "unPaiedYN (미수금 보유 여부) : " + CStr(AccountInfo.unPaidYN) + vbCrLf
+    tmp = tmp + "unPaiedYN (미수금 보유여부) : " + CStr(AccountInfo.unPaidYN) + vbCrLf
     tmp = tmp + "memo (메모) : " + AccountInfo.Memo
-    
-    MsgBox tmp
-End Sub
-
-'=========================================================================
-' 계좌 등록, 수정 및 삭제할 수 있는 계좌 관리 팝업 URL을 반환합니다.
-' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#GetBankAccountMgtURL
-'=========================================================================
-Private Sub btnGetBankAccountMgtURL_Click()
-    Dim URL As String
-           
-    URL = easyFinBankService.GetBankAccountMgtURL(txtCorpNum.Text, txtUserID.Text)
-    
-    If URL = "" Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
-        Exit Sub
-    End If
-    
-    MsgBox "URL : " + vbCrLf + URL
-    txtURL.Text = URL
-End Sub
-
-'=========================================================================
-' 팝빌 계좌조회 API 서비스 과금정보를 확인합니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#GetChargeInfo
-'=========================================================================
-Private Sub btnGetChargeInfo_Click()
-    Dim ChargeInfo As PBChargeInfo
-    Dim tmp As String
-    
-    Set ChargeInfo = easyFinBankService.GetChargeInfo(txtCorpNum.Text)
-     
-    If ChargeInfo Is Nothing Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
-        Exit Sub
-    End If
-    
-    tmp = tmp + "unitCost (월정액단가) : " + ChargeInfo.unitCost + vbCrLf
-    tmp = tmp + "chargeMethod (과금유형) : " + ChargeInfo.chargeMethod + vbCrLf
-    tmp = tmp + "rateSystem (과금제도) : " + ChargeInfo.rateSystem + vbCrLf
-    
-    MsgBox tmp
-End Sub
-
-'=========================================================================
-' 연동회원 포인트 충전을 위한 페이지의 팝업 URL을 반환합니다.
-' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#GetChargeURL
-'=========================================================================
-Private Sub btnGetChargeURL_Click()
-    Dim URL As String
-           
-    URL = easyFinBankService.GetChargeURL(txtCorpNum.Text, txtUserID.Text)
-    
-    If URL = "" Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
-        Exit Sub
-    End If
-    
-    MsgBox "URL : " + vbCrLf + URL
-    txtURL.Text = URL
-End Sub
-
-'=========================================================================
-' 연동회원의 회사정보를 확인합니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#GetCorpInfo
-'=========================================================================
-Private Sub btnGetCorpInfo_Click()
-    Dim CorpInfo As PBCorpInfo
-    Dim tmp As String
-    
-    Set CorpInfo = easyFinBankService.GetCorpInfo(txtCorpNum.Text)
-     
-    If CorpInfo Is Nothing Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
-        Exit Sub
-    End If
-    
-    tmp = tmp + "ceoname (대표자명) : " + CorpInfo.ceoname + vbCrLf
-    tmp = tmp + "corpName (상호) : " + CorpInfo.corpName + vbCrLf
-    tmp = tmp + "addr (주소) : " + CorpInfo.addr + vbCrLf
-    tmp = tmp + "bizType (업태) : " + CorpInfo.bizType + vbCrLf
-    tmp = tmp + "bizClass (종목) : " + CorpInfo.bizClass + vbCrLf
     
     MsgBox tmp
 End Sub
@@ -779,7 +677,7 @@ Private Sub btnGetFlatRateState_Click()
     '기관코드
     BankCode = ""
     
-    '팝빌에 등록된 계좌번호
+    '계좌번호
     AccountNumber = ""
     
     Set flatRateInfo = easyFinBankService.GetFlatRateState(txtCorpNum.Text, BankCode, AccountNumber)
@@ -803,8 +701,8 @@ Private Sub btnGetFlatRateState_Click()
 End Sub
 
 '=========================================================================
-' RequestJob(수집 요청)를 통해 반환 받은 작업아이디의 상태를 확인합니다.
-' - 거래 내역 조회(Search API) 함수 또는 거래 요약 정보 조회(Summary API) 함수전
+' 수집 요청(RequestJob API) 함수를 통해 반환 받은 작업 아이디의 상태를 확인합니다.
+' - 거래 내역 조회(Search API) 함수 또는 거래 요약 정보 조회(Summary API) 함수를 사용하기 전에
 '   수집 작업의 진행 상태, 수집 작업의 성공 여부를 확인해야 합니다.
 ' - 작업 상태(jobState) = 3(완료)이고 수집 결과 코드(errorCode) = 1(수집성공)이면
 '   거래 내역 조회(Search) 또는 거래 요약 정보 조회(Summary) 를 해야합니다.
@@ -823,92 +721,17 @@ Private Sub btnGetJobState_Click()
         Exit Sub
     End If
     
-    tmp = tmp + "jobID(작업아이디) : " + jobInfo.jobID + vbCrLf
-    tmp = tmp + "jobState(수집상태) : " + CStr(jobInfo.jobState) + vbCrLf
-    tmp = tmp + "startDate(시작일자) : " + jobInfo.startDate + vbCrLf
-    tmp = tmp + "endDate(종료일자) : " + jobInfo.endDate + vbCrLf
-    tmp = tmp + "errorCode(오류코드) : " + CStr(jobInfo.errorCode) + vbCrLf
-    tmp = tmp + "errorReason(오류메시지) : " + jobInfo.errorReason + vbCrLf
-    tmp = tmp + "jobStartDT(작업 시작일시) : " + jobInfo.jobStartDT + vbCrLf
-    tmp = tmp + "jobEndDT(작업 종료일시) : " + jobInfo.jobEndDT + vbCrLf
-    tmp = tmp + "regDT(수집 요청일시) : " + jobInfo.regDT + vbCrLf
+    tmp = tmp + "jobID (작업아이디) : " + jobInfo.jobID + vbCrLf
+    tmp = tmp + "jobState (수집상태) : " + CStr(jobInfo.jobState) + vbCrLf
+    tmp = tmp + "startDate (시작일자) : " + jobInfo.startDate + vbCrLf
+    tmp = tmp + "endDate (종료일자) : " + jobInfo.endDate + vbCrLf
+    tmp = tmp + "errorCode (오류코드) : " + CStr(jobInfo.errorCode) + vbCrLf
+    tmp = tmp + "errorReason (오류메시지) : " + jobInfo.errorReason + vbCrLf
+    tmp = tmp + "jobStartDT (작업 시작일시) : " + jobInfo.jobStartDT + vbCrLf
+    tmp = tmp + "jobEndDT (작업 종료일시) : " + jobInfo.jobEndDT + vbCrLf
+    tmp = tmp + "regDT (수집 요청일시) : " + jobInfo.regDT + vbCrLf
     
     MsgBox tmp
-End Sub
-
-'=========================================================================
-' 연동회원의 잔여포인트를 확인합니다.
-' - 과금방식이 파트너과금인 경우 파트너 잔여포인트(GetPartnerBalance API)를 통해 확인하시기 바랍니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#GetPartnerBalance
-'=========================================================================
-Private Sub btnGetPartnerBalance_Click()
-    Dim balance As Double
-    
-    balance = easyFinBankService.GetPartnerBalance(txtCorpNum.Text)
-    
-    If balance < 0 Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
-        Exit Sub
-    End If
-    
-    MsgBox "파트너 잔여포인트 : " + CStr(balance)
-End Sub
-
-'=========================================================================
-' 파트너 포인트 충전을 위한 페이지의 팝업 URL을 반환합니다.
-' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#GetPartnerURL
-'=========================================================================
-Private Sub btnGetPartnerURL_CHRG_Click()
-    Dim URL As String
-           
-    URL = easyFinBankService.GetPartnerURL(txtCorpNum.Text, "CHRG")
-    
-    If URL = "" Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
-        Exit Sub
-    End If
-    
-    MsgBox "URL : " + vbCrLf + URL
-    txtURL.Text = URL
-End Sub
-
-'=========================================================================
-' 연동회원 포인트 결제내역 확인을 위한 페이지의 팝업 URL을 반환합니다.
-' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#GetPaymentURL
-'=========================================================================
-Private Sub btnGetPaymentURL_Click()
-    Dim URL As String
-           
-    URL = easyFinBankService.GetPaymentURL(txtCorpNum.Text, txtUserID.Text)
-    
-    If URL = "" Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
-        Exit Sub
-    End If
-    
-    MsgBox "URL : " + vbCrLf + URL
-    txtURL.Text = URL
-End Sub
-
-'=========================================================================
-' 연동회원 포인트 사용내역 확인을 위한 페이지의 팝업 URL을 반환합니다.
-' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#GetUseHistoryURL
-'=========================================================================
-Private Sub btnGetUseHistoryURL_Click()
-    Dim URL As String
-           
-    URL = easyFinBankService.GetUseHistoryURL(txtCorpNum.Text, txtUserID.Text)
-    
-    If URL = "" Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
-        Exit Sub
-    End If
-    
-    MsgBox "URL : " + vbCrLf + URL
-    txtURL.Text = URL
 End Sub
 
 '=========================================================================
@@ -920,7 +743,7 @@ Private Sub btnJoinMember_Click()
     Dim Response As PBResponse
     
     '링크 아이디
-    joinData.linkID = linkID
+    joinData.LinkID = LinkID
     
     '사업자번호, '-'제외, 10자리
     joinData.CorpNum = "1234567890"
@@ -940,7 +763,7 @@ Private Sub btnJoinMember_Click()
     '종목, 최대 40자
     joinData.bizClass = "종목"
     
-    '아이디, 6자이상 20자 미만
+    '아이디, 6자이상 20자 이하
     joinData.id = "userid"
     
     '비밀번호, 8자 이상 20자 이하(영문, 숫자, 특수문자 조합)
@@ -951,12 +774,6 @@ Private Sub btnJoinMember_Click()
     
     '담당자 연락처, 최대 20자
     joinData.ContactTEL = "02-999-9999"
-    
-    '담당자 휴대폰번호, 최대 20자
-    joinData.ContactHP = "010-1234-5678"
-    
-    '담당자 팩스번호, 최대 20자
-    joinData.ContactFAX = "02-999-9998"
     
     '담당자 메일, 최대 70자
     joinData.ContactEmail = "test@test.com"
@@ -972,7 +789,48 @@ Private Sub btnJoinMember_Click()
 End Sub
 
 '=========================================================================
-' RequestJob(수집 요청)를 통해 반환 받은 작업아이디의 목록을 확인합니다.
+' 팝빌 계좌조회 API 서비스 과금정보를 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetChargeInfo
+'=========================================================================
+Private Sub btnGetChargeInfo_Click()
+    Dim ChargeInfo As PBChargeInfo
+    Dim tmp As String
+    
+    Set ChargeInfo = easyFinBankService.GetChargeInfo(txtCorpNum.Text)
+     
+    If ChargeInfo Is Nothing Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    tmp = tmp + "unitCost (월정액단가) : " + ChargeInfo.unitCost + vbCrLf
+    tmp = tmp + "chargeMethod (과금유형) : " + ChargeInfo.chargeMethod + vbCrLf
+    tmp = tmp + "rateSystem (과금제도) : " + ChargeInfo.rateSystem + vbCrLf
+    
+    MsgBox tmp
+End Sub
+
+'=========================================================================
+' 팝빌 사이트에 로그인 상태로 접근할 수 있는 페이지의 팝업 URL을 반환합니다.
+' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetAccessURL
+'=========================================================================
+Private Sub btnGetAccessURL_Click()
+    Dim URL As String
+           
+    URL = easyFinBankService.GetAccessURL(txtCorpNum.Text, txtUserID.Text)
+    
+    If URL = "" Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox "URL : " + vbCrLf + URL
+    txtURL.Text = URL
+End Sub
+
+'=========================================================================
+' 수집 요청(RequestJob API) 함수를 통해 반환 받은 작업아이디의 목록을 확인합니다.
 ' - 수집 요청 후 1시간이 경과한 수집 요청건은 상태정보가 반환되지 않습니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#ListActiveJob
 '=========================================================================
@@ -1013,7 +871,7 @@ Private Sub btnListActiveJob_Click()
 End Sub
 
 '=========================================================================
-' 팝빌에 등록된 은행계좌 목록을 반환한다.
+' 팝빌에 등록된 계좌정보 목록을 반환합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#ListBankAccount
 '=========================================================================
 Private Sub btnListBankAccount_Click()
@@ -1028,8 +886,7 @@ Private Sub btnListBankAccount_Click()
         Exit Sub
     End If
     
-    
-    tmp = "accountNumber(계좌번호) | bankCode(기관코드) | accountName(계좌별칭) | accountType(계좌유형) | state(계좌 상태) | regDT(등록일시) |" _
+     tmp = "accountNumber(계좌번호) | bankCode(기관코드) | accountName(계좌별칭) | accountType(계좌유형) | state(계좌 상태) | regDT(등록일시) |" _
         + " contractState (정액제 서비스 상태) | closeRequestYN (정액제 해지신청 여부) | useRestrictYN (정액제 사용제한 여부) | closeOnExpired (정액제 만료시 해지여부) | " _
         + " unPaiedYN (미수금 보유 여부) | memo(메모)" + vbCrLf + vbCrLf
     
@@ -1058,7 +915,102 @@ Private Sub btnListBankAccount_Click()
 End Sub
 
 '=========================================================================
+' 계좌조회 서비스를 이용할 계좌를 팝빌에 등록합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#RegistBankAccount
+'=========================================================================
+Private Sub btnRegistBankAccount_Click()
+    Dim AccountInfo As New PBEasyFinBankAccountForm
+    Dim Response As PBResponse
+    
+    ' [필수] 기관코드
+    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 / 수협은행-0007 / 농협은행-0011 / 우리은행-0020
+    ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
+    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 / 씨티은행-0027
+    AccountInfo.BankCode = ""
+    
+    ' [필수] 계좌번호, 하이픈('-') 제외
+    AccountInfo.AccountNumber = ""
+
+    ' [필수] 계좌비밀번호
+    AccountInfo.AccountPWD = ""
+
+    ' [필수] 계좌유형, "법인" 또는 "개인" 입력
+    AccountInfo.AccountType = ""
+
+    ' [필수] 예금주 식별정보 ('-' 제외)
+    ' 계좌유형이 "법인"인 경우 : 사업자번호(10자리)
+    ' 계좌유형이 "개인"인 경우 : 예금주 생년월일(6자리-YYMMDD)
+    AccountInfo.IdentityNumber = ""
+
+    ' 계좌 별칭
+    AccountInfo.AccountName = ""
+
+    ' 인터넷뱅킹 아이디 (국민은행 필수)
+    AccountInfo.BankID = ""
+
+    ' 조회전용 계정 아이디 (대구은행, 신협, 신한은행 필수)
+    AccountInfo.FastID = ""
+
+    ' 조회전용 계정 비밀번호 (대구은행, 신협, 신한은행 필수)
+    AccountInfo.FastPWD = ""
+
+    ' 결제기간(개월), 1~12 입력가능, 미기재시 기본값(1) 처리
+    ' - 파트너 과금방식의 경우 입력값에 관계없이 1개월 처리
+    AccountInfo.UsePeriod = "1"
+
+    ' 메모
+    AccountInfo.Memo = ""
+    
+   
+    Set Response = easyFinBankService.RegistBankAccount(txtCorpNum.Text, AccountInfo)
+    
+    If Response Is Nothing Then
+        MsgBox ("응답코드(code) : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지(message) : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox ("응답코드(code)  : " + CStr(Response.code) + vbCrLf + "응답메시지(message) : " + Response.Message)
+End Sub
+
+'=========================================================================
+' 연동회원 사업자번호에 담당자(팝빌 로그인 계정)를 추가합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#RegistContact
+'=========================================================================
+Private Sub btnRegistContact_Click()
+    Dim joinData As New PBContactInfo
+    Dim Response As PBResponse
+    
+    '담당자 아이디, 6자 이상 50자 미만
+    joinData.id = "testkorea"
+    
+    '비밀번호, 8자 이상 20자 이하(영문, 숫자, 특수문자 조합)
+    joinData.Password = "asdf$%^123"
+    
+    '담당자명, 최대 100자
+    joinData.personName = "담당자명"
+    
+    '담당자 연락처, 최대 20자
+    joinData.tel = "070-1234-1234"
+    
+    '담당자 메일주소, 최대 100자
+    joinData.email = "test@test.com"
+    
+    '담당자 권한, 1-개인 / 2-읽기 / 3-회사
+    joinData.searchRole = 3
+        
+    Set Response = easyFinBankService.RegistContact(txtCorpNum.Text, joinData)
+    
+    If Response Is Nothing Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
+End Sub
+
+'=========================================================================
 ' 연동회원 사업자번호에 등록된 담당자(팝빌 로그인 계정) 정보를 확인합니다.
+
 ' https://docs.popbill.com/easyfinbank/vb/api#GetContactInfo
 '=========================================================================
 Private Sub btnGetContactInfo_Click()
@@ -1066,7 +1018,6 @@ Private Sub btnGetContactInfo_Click()
     Dim info As PBContactInfo
     Dim ContactID As String
     
-    '확인할 담당자 아이디
     ContactID = "testkorea"
     
     Set info = easyFinBankService.GetContactInfo(txtCorpNum.Text, ContactID, txtUserID.Text)
@@ -1076,12 +1027,12 @@ Private Sub btnGetContactInfo_Click()
         Exit Sub
     End If
     
-    tmp = "id(아이디) | personName(성명) | email(이메일) | hp(휴대폰번호) |  fax(팩스번호) | tel(연락처) | " _
+    tmp = "id(아이디) | personName(성명) | email(이메일) | tel(연락처) | " _
          + "regDT(등록일시) | searchRole(담당자 권한) | mgrYN(관리자 여부) | state(상태) " + vbCrLf
     
    
-    tmp = tmp + info.id + " | " + info.personName + " | " + info.email + " | " + info.hp + " | " + info.fax _
-        + info.tel + " | " + info.regDT + " | " + CStr(info.searchRole) + " | " + CStr(info.mgrYN) + " | " + CStr(info.state) + vbCrLf
+    tmp = tmp + info.id + " | " + info.personName + " | " + info.email + " | " + info.tel + " | " _
+            + info.regDT + " | " + CStr(info.searchRole) + " | " + CStr(info.mgrYN) + " | " + CStr(info.state) + vbCrLf
         
     MsgBox tmp
 End Sub
@@ -1102,116 +1053,15 @@ Private Sub btnListContact_Click()
         Exit Sub
     End If
     
-    tmp = "id(아이디) | personName(성명) | email(이메일) | hp(휴대폰번호) |  fax(팩스번호) | tel(연락처) | " _
+    tmp = "id(아이디) | personName(성명) | email(이메일) | tel(연락처) | " _
          + "regDT(등록일시) | searchRole(담당자 권한) | mgrYN(관리자 여부) | state(상태) " + vbCrLf
     
     For Each info In resultList
-        tmp = tmp + info.id + " | " + info.personName + " | " + info.email + " | " + info.hp + " | " + info.fax _
+        tmp = tmp + info.id + " | " + info.personName + " | " + info.email + " | " _
         + info.tel + " | " + info.regDT + " | " + CStr(info.searchRole) + " | " + CStr(info.mgrYN) + " | " + CStr(info.state) + vbCrLf
     Next
     
     MsgBox tmp
-End Sub
-
-'=========================================================================
-' 계좌조회 서비스를 이용할 계좌를 팝빌에 등록합니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#RegistBankAccount
-'=========================================================================
-Private Sub btnRegistBankAccount_Click()
-    Dim AccountInfo As New PBEasyFinBankAccountForm
-    Dim Response As PBResponse
-    
-    ' [필수] 기관코드
-    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
-    ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
-    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
-    AccountInfo.BankCode = ""
-    
-    ' [필수] 계좌번호 하이픈('-') 제외
-    AccountInfo.AccountNumber = ""
-
-    ' [필수] 계좌비밀번호
-    AccountInfo.AccountPWD = ""
-
-    ' [필수] 계좌유형, "법인" 또는 "개인" 입력
-    AccountInfo.AccountType = ""
-
-    ' [필수] 예금주 식별정보 (‘-‘ 제외)
-    ' 계좌유형이 “법인”인 경우 : 사업자번호(10자리)
-    ' 계좌유형이 “개인”인 경우 : 예금주 생년월일 (6자리-YYMMDD)
-    AccountInfo.IdentityNumber = ""
-
-    ' 계좌 별칭
-    AccountInfo.AccountName = ""
-
-    ' 인터넷뱅킹 아이디 (국민은행 필수)
-    AccountInfo.BankID = ""
-
-    ' 조회전용 계정 아이디 (대구은행, 신협, 신한은행 필수)
-    AccountInfo.FastID = ""
-
-    ' 조회전용 계정 비밀번호 (대구은행, 신협, 신한은행 필수
-    AccountInfo.FastPWD = ""
-
-    ' 결제기간(개월), 1~12 입력가능, 미기재시 기본값(1) 처리
-    ' - 파트너 과금방식의 경우 입력값에 관계없이 1개월 처리
-    AccountInfo.UsePeriod = "1"
-
-    ' 메모
-    AccountInfo.Memo = ""
-    
-   
-    Set Response = easyFinBankService.RegistBankAccount(txtCorpNum.Text, AccountInfo)
-    
-    If Response Is Nothing Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
-        Exit Sub
-    End If
-    
-    MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
-End Sub
-
-'=========================================================================
-' 연동회원 사업자번호에 담당자(팝빌 로그인 계정)를 추가합니다.
-' - https://docs.popbill.com/easyfinbank/vb/api#RegistContact
-'=========================================================================
-Private Sub btnRegistContact_Click()
-    Dim joinData As New PBContactInfo
-    Dim Response As PBResponse
-    
-    '담당자 아이디, 6자 이상 50자 미만
-    joinData.id = "vb6easyfin004"
-    
-    '비밀번호, 8자 이상 20자 이하(영문, 숫자, 특수문자 조합)
-    joinData.Password = "asdf!@#$1234"
-    
-    '담당자명, 최대 100자
-    joinData.personName = "담당자명"
-    
-    '담당자 연락처, 최대 20자
-    joinData.tel = "070-1234-1234"
-    
-    '담당자 휴대폰번호, 최대 20자
-    joinData.hp = "010-1234-1234"
-    
-    '담당자 팩스번,최대 20자
-    joinData.fax = "070-1234-1234"
-    
-    '담당자 메일주소, 최대 100자
-    joinData.email = "test@test.com"
-    
-    '담당자 권한, 1-개인 / 2-읽기 / 3-회사
-    joinData.searchRole = 2
-    
-        
-    Set Response = easyFinBankService.RegistContact(txtCorpNum.Text, joinData)
-    
-    If Response Is Nothing Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
-        Exit Sub
-    End If
-    
-    MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
 End Sub
 
 '=========================================================================
@@ -1220,7 +1070,6 @@ End Sub
 ' - 반환 받은 작업아이디는 함수 호출 시점부터 1시간 동안 유효합니다.
 ' - https://docs.popbill.com/easyfinbank/vb/api#RequestJob
 '=========================================================================
-
 Private Sub btnRequestJob_Click()
     Dim jobID As String
     Dim BankCode As String
@@ -1231,7 +1080,7 @@ Private Sub btnRequestJob_Click()
     '기관코드
     BankCode = ""
     
-    '팝빌에 등록된 계좌번호
+    '계좌번호
     AccountNumber = ""
     
     '시작일자, 표시형식(yyyyMMdd)
@@ -1263,22 +1112,22 @@ Private Sub btnRevokeCloseBankAccount_Click()
     Dim AccountNumber As String
     
     ' [필수] 기관코드
-    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
+    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 / 수협은행-0007 / 농협은행-0011 / 우리은행-0020
     ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
-    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
+    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 / 씨티은행-0027
     BankCode = ""
     
-    ' [필수] 계좌번호 하이픈('-') 제외
+    ' [필수] 계좌번호, 하이픈('-') 제외
     AccountNumber = ""
     
     Set Response = easyFinBankService.RevokeCloseBankAccount(txtCorpNum.Text, BankCode, AccountNumber)
     
     If Response Is Nothing Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        MsgBox ("응답코드(code) : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지(message) : " + easyFinBankService.LastErrMessage)
         Exit Sub
     End If
     
-    MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
+    MsgBox ("응답코드(code)  : " + CStr(Response.code) + vbCrLf + "응답메시지(message) : " + Response.Message)
 End Sub
 
 '=========================================================================
@@ -1290,11 +1139,13 @@ Private Sub btnSaveMemo_Click()
     Dim tid As String
     Dim Memo As String
     
-    ' 거래내역 아이디, SeachAPI 응답항목 중 tid
-    tid = "02112181100000000120211210000003"
+    '메모를 저장할 거래내역 아이디
+    '[Search - 거래 내역 조회]의 반환 값 'EasyFinBankSearchDetail'의 'tid'를 통해 확인 가능
+    tid = ""
     
-    '메모
-    Memo = "메모 테스트"
+    '거래내역에 저장할 메모
+    Memo = "테스트-vba2002"
+    
     
     Set Response = easyFinBankService.SaveMemo(txtCorpNum.Text, tid, Memo)
     
@@ -1305,7 +1156,6 @@ Private Sub btnSaveMemo_Click()
     
     MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
 End Sub
-
 
 '=========================================================================
 ' GetJobState(수집 상태 확인)를 통해 상태 정보가 확인된 작업아이디를 활용하여 계좌 거래 내역을 조회합니다.
@@ -1382,7 +1232,8 @@ Private Sub btnSearch_Click()
 End Sub
 
 '=========================================================================
-' GetJobState(수집 상태 확인)를 통해 상태 정보가 확인된 작업아이디를 활용하여 계좌 거래내역의 요약 정보를 조회합니다.
+' 수집 상태 확인(GetJobState API) 함수를 통해 상태 정보가 확인된 작업아이디를 활용하여 계좌 거래내역의 요약 정보를 조회합니다.
+' - 요약 정보 : 입·출 금액 합계, 입·출 거래 건수
 ' - https://docs.popbill.com/easyfinbank/vb/api#Summary
 '=========================================================================
 Private Sub btnSummary_Click()
@@ -1397,7 +1248,7 @@ Private Sub btnSummary_Click()
     
     '조회 검색어, 입금/출금액, 메모, 적요 like 검색
     SearchString = ""
-    
+        
     Set summaryInfo = easyFinBankService.Summary(txtCorpNum.Text, txtJobID.Text, TradeType, SearchString, txtUserID.Text)
         
     If summaryInfo Is Nothing Then
@@ -1423,12 +1274,12 @@ Private Sub btnUpdateBankAccount_Click()
     Dim Response As PBResponse
     
     ' [필수] 기관코드
-    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 /수협은행-0007 / 농협은행-0011 / 우리은행-0020
+    ' 산업은행-0002 / 기업은행-0003 / 국민은행-0004 / 수협은행-0007 / 농협은행-0011 / 우리은행-0020
     ' SC은행-0023 / 대구은행-0031 / 부산은행-0032 / 광주은행-0034 / 제주은행-0035 / 전북은행-0037
-    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 /씨티은행-0027
+    ' 경남은행-0039 / 새마을금고-0045 / 신협은행-0048 / 우체국-0071 / KEB하나은행-0081 / 신한은행-0088 / 씨티은행-0027
     AccountInfo.BankCode = ""
     
-    ' [필수] 계좌번호 하이픈('-') 제외
+    ' [필수] 계좌번호, 하이픈('-') 제외
     AccountInfo.AccountNumber = ""
 
     ' [필수] 계좌비밀번호
@@ -1443,7 +1294,7 @@ Private Sub btnUpdateBankAccount_Click()
     ' 조회전용 계정 아이디 (대구은행, 신협, 신한은행 필수)
     AccountInfo.FastID = ""
 
-    ' 조회전용 계정 비밀번호 (대구은행, 신협, 신한은행 필수
+    ' 조회전용 계정 비밀번호 (대구은행, 신협, 신한은행 필수)
     AccountInfo.FastPWD = ""
     
     ' 메모
@@ -1453,11 +1304,11 @@ Private Sub btnUpdateBankAccount_Click()
     Set Response = easyFinBankService.UpdateBankAccount(txtCorpNum.Text, AccountInfo)
     
     If Response Is Nothing Then
-        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        MsgBox ("응답코드(code) : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지(message) : " + easyFinBankService.LastErrMessage)
         Exit Sub
     End If
     
-    MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
+    MsgBox ("응답코드(code)  : " + CStr(Response.code) + vbCrLf + "응답메시지(message) : " + Response.Message)
 End Sub
 
 '=========================================================================
@@ -1469,7 +1320,7 @@ Private Sub btnUpdateContact_Click()
     Dim Response As PBResponse
     
     '담당자 아이디
-    joinData.id = "vb6easyfin004"
+    joinData.id = txtUserID.Text
     
     '담당자 성명, 최대 100자
     joinData.personName = "담당자명_수정"
@@ -1477,18 +1328,11 @@ Private Sub btnUpdateContact_Click()
     '담당자 연락처, 최대 20자
     joinData.tel = "070-1234-1234"
     
-    '담당자 휴대폰번호, 최대 20자
-    joinData.hp = "010-1234-1234"
-        
-    '담당자 팩스번호, 최대 20자
-    joinData.fax = "070-1234-1234"
-    
     '담당자 이메일, 최대 100자
     joinData.email = "test@test.com"
 
     '담당자 권한, 1-개인 / 2-읽기 / 3-회사
-    joinData.searchRole = 1
-    
+    joinData.searchRole = 3
                 
     Set Response = easyFinBankService.UpdateContact(txtCorpNum.Text, joinData, txtUserID.Text)
     
@@ -1501,7 +1345,31 @@ Private Sub btnUpdateContact_Click()
 End Sub
 
 '=========================================================================
-' 연동회원의 회사정보를 수정합니다.
+' 연동회원의 회사정보를 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetCorpInfo
+'=========================================================================
+Private Sub btnGetCorpInfo_Click()
+    Dim CorpInfo As PBCorpInfo
+    Dim tmp As String
+    
+    Set CorpInfo = easyFinBankService.GetCorpInfo(txtCorpNum.Text)
+     
+    If CorpInfo Is Nothing Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    tmp = tmp + "ceoname (대표자명) : " + CorpInfo.ceoname + vbCrLf
+    tmp = tmp + "corpName (상호) : " + CorpInfo.corpName + vbCrLf
+    tmp = tmp + "addr (주소) : " + CorpInfo.addr + vbCrLf
+    tmp = tmp + "bizType (업태) : " + CorpInfo.bizType + vbCrLf
+    tmp = tmp + "bizClass (종목) : " + CorpInfo.bizClass + vbCrLf
+    
+    MsgBox tmp
+End Sub
+
+'=========================================================================
+' 연동회원의 회사정보를 수정합니다
 ' - https://docs.popbill.com/easyfinbank/vb/api#UpdateCorpInfo
 '=========================================================================
 Private Sub btnUpdateCorpInfo_Click()
@@ -1533,10 +1401,120 @@ Private Sub btnUpdateCorpInfo_Click()
     MsgBox ("응답코드 : " + CStr(Response.code) + vbCrLf + "응답메시지 : " + Response.Message)
 End Sub
 
+'=========================================================================
+' 연동회원의 잔여포인트를 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetBalance
+'=========================================================================
+Private Sub btnGetBalance_Click()
+    Dim balance As Double
+    
+    balance = easyFinBankService.GetBalance(txtCorpNum.Text)
+    
+    If balance < 0 Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox "연동회원 잔여포인트 : " + CStr(balance)
+End Sub
+
+'=========================================================================
+' 연동회원 포인트 충전을 위한 페이지의 팝업 URL을 반환합니다.
+' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetChargeURL
+'=========================================================================
+Private Sub btnGetChargeURL_Click()
+    Dim URL As String
+           
+    URL = easyFinBankService.GetChargeURL(txtCorpNum.Text, txtUserID.Text)
+    
+    If URL = "" Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox "URL : " + vbCrLf + URL
+    txtURL.Text = URL
+End Sub
+
+'=========================================================================
+' 연동회원 포인트 결제내역 확인을 위한 페이지의 팝업 URL을 반환합니다.
+' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetPaymentURL
+'=========================================================================
+Private Sub btnGetPaymentURL_Click()
+    Dim URL As String
+           
+    URL = easyFinBankService.GetPaymentURL(txtCorpNum.Text, txtUserID.Text)
+    
+    If URL = "" Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox "URL : " + vbCrLf + URL
+    txtURL.Text = URL
+End Sub
+
+'=========================================================================
+' 연동회원 포인트 사용내역 확인을 위한 페이지의 팝업 URL을 반환합니다.
+' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetUseHistoryURL
+'=========================================================================
+Private Sub btnGetUseHistoryURL_Click()
+    Dim URL As String
+           
+    URL = easyFinBankService.GetUseHistoryURL(txtCorpNum.Text, txtUserID.Text)
+    
+    If URL = "" Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox "URL : " + vbCrLf + URL
+    txtURL.Text = URL
+End Sub
+
+'=========================================================================
+' 파트너의 잔여포인트를 확인합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetPartnerBalance
+'=========================================================================
+Private Sub btnGetPartnerBalance_Click()
+    Dim balance As Double
+    
+    balance = easyFinBankService.GetPartnerBalance(txtCorpNum.Text)
+    
+    If balance < 0 Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox "파트너 잔여포인트 : " + CStr(balance)
+End Sub
+
+'=========================================================================
+' 파트너 포인트 충전을 위한 페이지의 팝업 URL을 반환합니다.
+' - 반환되는 URL은 보안 정책상 30초 동안 유효하며, 시간을 초과한 후에는 해당 URL을 통한 페이지 접근이 불가합니다.
+' - https://docs.popbill.com/easyfinbank/vb/api#GetPartnerURL
+'=========================================================================
+Private Sub btnGetPartnerURL_CHRG_Click()
+    Dim URL As String
+           
+    URL = easyFinBankService.GetPartnerURL(txtCorpNum.Text, "CHRG")
+    
+    If URL = "" Then
+        MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
+        Exit Sub
+    End If
+    
+    MsgBox "URL : " + vbCrLf + URL
+    txtURL.Text = URL
+End Sub
+
 Private Sub Form_Load()
 
-    '간편 계좌조회 서비스 초기화
-    easyFinBankService.Initialize linkID, SecretKey
+    '모듈 초기화
+    easyFinBankService.Initialize LinkID, SecretKey
     
     '연동환경설정값, True-개발용 False-상업용
     easyFinBankService.IsTest = True
@@ -1548,4 +1526,7 @@ Private Sub Form_Load()
     easyFinBankService.UseLocalTimeYN = False
     
 End Sub
+
+
+
 
