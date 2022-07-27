@@ -464,7 +464,7 @@ Attribute VB_Exposed = False
 '
 ' 팝빌 계좌조회 API VB SDK Example
 '
-' - 업데이트 일자 : 2022-04-06
+' - 업데이트 일자 : 2022-07-26
 ' - 연동 기술지원 연락처 : 1600-9854
 ' - 연동 기술지원 이메일 : code@linkhubcorp.com
 ' - VB SDK 적용방법 안내 : https://docs.popbill.com/easyfinbank/tutorial/vb
@@ -474,7 +474,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 '링크아이디
-Private Const LinkID = "TESTER"
+Private Const linkID = "TESTER"
 
 '비밀키
 Private Const SecretKey = "SwWxqU+0TErBXy/9TVjIPEnI0VTUMMSQZtJf3Ed8q3I="
@@ -507,7 +507,7 @@ End Sub
 Private Sub btnCheckIsMember_Click()
     Dim Response As PBResponse
     
-    Set Response = easyFinBankService.CheckIsMember(txtCorpNum.Text, LinkID)
+    Set Response = easyFinBankService.CheckIsMember(txtCorpNum.Text, linkID)
     
     If Response Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -589,7 +589,7 @@ Private Sub btnDeleteBankAccount_Click()
     ' [필수] 계좌번호 하이픈('-') 제외
     AccountNumber = ""
 
-    Set Response = easyFinBankService.DeleteBankAccount(txtCorpNum.Text, BankCode, AccountNumber, txtUserID.Text)
+    Set Response = easyFinBankService.DeleteBankAccount(txtCorpNum.Text, BankCode, AccountNumber)
     
     If Response Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -743,7 +743,7 @@ Private Sub btnJoinMember_Click()
     Dim Response As PBResponse
     
     '링크 아이디
-    joinData.LinkID = LinkID
+    joinData.linkID = linkID
     
     '사업자번호, '-'제외, 10자리
     joinData.CorpNum = "1234567890"
@@ -1020,7 +1020,7 @@ Private Sub btnGetContactInfo_Click()
     
     ContactID = "testkorea"
     
-    Set info = easyFinBankService.GetContactInfo(txtCorpNum.Text, ContactID, txtUserID.Text)
+    Set info = easyFinBankService.GetContactInfo(txtCorpNum.Text, ContactID)
     
     If info Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -1187,7 +1187,7 @@ Private Sub btnSearch_Click()
     '조회 검색어, 입금/출금액, 메모, 적요 like 검색
     SearchString = ""
         
-    Set searchList = easyFinBankService.Search(txtCorpNum.Text, txtJobID.Text, TradeType, SearchString, page, perPage, order, txtUserID.Text)
+    Set searchList = easyFinBankService.Search(txtCorpNum.Text, txtJobID.Text, TradeType, SearchString, page, perPage, order)
     
         
     If searchList Is Nothing Then
@@ -1249,7 +1249,7 @@ Private Sub btnSummary_Click()
     '조회 검색어, 입금/출금액, 메모, 적요 like 검색
     SearchString = ""
         
-    Set summaryInfo = easyFinBankService.Summary(txtCorpNum.Text, txtJobID.Text, TradeType, SearchString, txtUserID.Text)
+    Set summaryInfo = easyFinBankService.Summary(txtCorpNum.Text, txtJobID.Text, TradeType, SearchString)
         
     If summaryInfo Is Nothing Then
         MsgBox ("응답코드 : " + CStr(easyFinBankService.LastErrCode) + vbCrLf + "응답메시지 : " + easyFinBankService.LastErrMessage)
@@ -1514,7 +1514,7 @@ End Sub
 Private Sub Form_Load()
 
     '모듈 초기화
-    easyFinBankService.Initialize LinkID, SecretKey
+    easyFinBankService.Initialize linkID, SecretKey
     
     '연동환경설정값, True-개발용 False-상업용
     easyFinBankService.IsTest = True
