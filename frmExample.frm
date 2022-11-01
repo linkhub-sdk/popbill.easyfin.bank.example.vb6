@@ -464,7 +464,7 @@ Attribute VB_Exposed = False
 '
 ' 팝빌 계좌조회 API VB SDK Example
 '
-' - 업데이트 일자 : 2022-07-26
+' - 업데이트 일자 : 2022-11-01
 ' - 연동 기술지원 연락처 : 1600-9854
 ' - 연동 기술지원 이메일 : code@linkhubcorp.com
 ' - VB SDK 적용방법 안내 : https://docs.popbill.com/easyfinbank/tutorial/vb
